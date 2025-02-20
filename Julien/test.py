@@ -1,103 +1,33 @@
-import functools
 import random
-from collections import Counter
-
-from scipy.stats import chi2_contingency
-def fact(i):
-    if i == 00 or i == 1:
-        return 1
-    else:
-        return i * fact(i-1)
 
 
-def fisherYates(l):
-    for i in range (len(l)-2):
-        j = 0
-        while i <= j < (len(l) - 1):
-            j = random.randint(i,len(l)-1)
-        l[i], l[j] = l[j], l[i]
-    return l
-
-
-@functools.lru_cache(maxsize=None)
-def RecPart(n,k):
-    if n == k:
-        return 1
-    if n == 0 or k == 0 : return 0
-
-    return k*RecPart(n-1, k) + RecPart(n-1, k-1)
-
-def generatorPartition(n,k):
-    if n == k:
-        return [[i] for i in range(1, n + 1)]
-    if k > n or n == k:
-        return []
+def P_generator(n, k):
+    # Base case: if we need to partition 0 into 0 parts, return an empty partition
     if n == 0 and k == 0:
         return []
-    val = random.randint(1, RecPart(n, k))
-    if val <= RecPart(n-1, k-1):
-        partition = generatorPartition(n - 1, k - 1)
-        partition.append([n])  # Add n as a new subset
-        partition = fisherYates(partition)
-        return partition
-    else:
-        partition = generatorPartition(n - 1, k)
+    # If we have to partition n into 0 parts, it's impossible unless n is 0
+    if k == 0:
+        return []
+    # If we need to partition n into k parts and n < k, it's impossible
+    if n < k:
+        return []
 
-        rand_spot = random.randint(0, k-1)
-        partition[rand_spot].append(n)
-        partition = fisherYates(partition)
-        return partition
+    # Decide randomly whether to take a part of size k or to take 1 as part
+    # Case 1: Take 1 as one part and partition (n-1) into (k-1) parts
+    if random.random() < 0.5 and n > 0:
+        rest = P_generator(n - 1, k - 1)
+        if rest is not None:
+            return [1] + rest
 
+    # Case 2: Take a part of size >= k, reduce n by k, partition the rest into k parts
+    if n >= k:
+        rest = P_generator(n - k, k)
+        if rest is not None:
+            return [k] + rest
 
-def aux_generator(n,k):
-
-    return generatorPartition_unrank(n,k, random.randint(0,RecPart(n,k) - 1))
-def generatorPartition_unrank(n,k,r):
-    if n == k:
-        return [[i] for i in range(1, n + 1)]
-
-    threshold = RecPart(n-1,k-1)
-    if r < threshold:
-        partition = generatorPartition_unrank(n - 1, k - 1,r)
-        partition.append([n])  # Add n as a new subset
-        return fisherYates(partition)
-    else:
-        partition = generatorPartition_unrank(n - 1, k, r - threshold)
-        rand_spot = random.randint(0, k-1)
-        partition[rand_spot].append(n)
-        return fisherYates(partition)
-print(generatorPartition(8,4))
+    # Return None if no valid partition is found in both cases
+    return None
 
 
-"""
-Ordered Partitions
-Called Fubini numbers / Ordered Bell Numbers
-P(n,k) = k! * S(n,k)
-
-Recurrence call = 
-P(n,k) = k* P(n-1,k) + P(n-1,k-1)
-"""
-
-def uniformite(n,k):
-    l = []
-    for i in range (1000000) :
-        sl = generatorPartition_unrank(n,k, random.randint(0, RecPart(n,k) - 1))
-        inn = False
-        for j in l:
-            if j[0] == sl :
-                j[1] += 1
-                inn = True
-                break
-        if not inn :
-            l.append([sl, 1])
-    for j in l:
-        print("p( ", j[0], " ) = ", j[1]/10000)
-
-
-#print(generatorPartition(10,4))
-
-n = 5
-k = 2
-
-print(uniformite(n,k))
-
+# Example usage
+print(P_generator(10, 5))  # Example of partitioning 10 into 5 parts

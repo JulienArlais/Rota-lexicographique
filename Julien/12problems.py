@@ -137,4 +137,4 @@ def uniformiteMultiComb(n,k):
     for j in l:
         print("p( ", j[0], " ) = ", j[1]/10000)
 
-print(uniformiteMultiComb(n,k))
+e
