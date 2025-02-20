@@ -10,7 +10,7 @@ def fact(i):
 
 @functools.lru_cache(maxsize=None)
 def nb_possibilites_2(k,n):
-    return fact(k)/fact(n)
+    return fact(k)/fact(k-n)
 
 def n_permutation(k,n):
     if k < n :
