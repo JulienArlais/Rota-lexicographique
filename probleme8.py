@@ -1,25 +1,6 @@
 import random
 import functools
 
-@functools.lru_cache(maxsize=None)
-def RecComb(n, k):
-    if n == k :
-        return 1
-    elif k == 0:
-        return 1
-    elif(n <= 0 or k > n):
-        return 0
-    else:
-        return RecComb(n-1,k-1) + RecComb(n-1, k)
-
-
-"""
- recursive call is 
- B(n,k) = Sum (n,k) Bk , where k goes from 0 to n-1
- partition 
-"""
-
-
 def fact(i):
     if i == 00 or i == 1:
         return 1
@@ -27,81 +8,45 @@ def fact(i):
         return i * fact(i-1)
 
 
-@functools.lru_cache(maxsize=None)
-def RecPart(n,k):
-    if n == k:
-        return 1
-    if n == 0 or k == 0 : return 0
-
-    return k*RecPart(n-1, k) + RecPart(n-1, k-1)
+def permutation_Formula(n,k):
+    return fact(n)/fact(n-k)
 
 
-def generatorPartition(n,k):
-    if n == k:
-        return [[i] for i in range(1, n + 1)]
-    if k > n or n == k:
-        return []
-    if n == 0 and k == 0:
-        return []
-    val = random.randint(1, RecPart(n, k))
-    if val <= RecPart(n-1, k-1):
-        partition = generatorPartition(n - 1, k - 1)
-        partition.append([n])  # Add n as a new subset
-        return partition
-    else:
-        partition = generatorPartition(n - 1, k)
+def fisherYates(l):
+    for i in range (len(l)-1):
+        r = random.randint(i,len(l)-1)
+        tmp = l[i]
+        l[i] = l[r]
+        l[r] = tmp
+    return l
 
-        rand_spot = random.randint(0, k-1)
-        partition[rand_spot].append(n)
-        return partition
-
-
-
-
-def generatorPartition_unranking(n,k,r):
-    if n == k:
-        return [[i] for i in range(1, n + 1)]
-    if k > n or n == k:
-        return []
-    if n == 0 and k == 0:
-        return []
-    if r < RecPart(n-1, k-1):
-        partition = generatorPartition_unranking(n - 1, k - 1, r)
-        partition.append([n])  # Add n as a new subset
-        return partition
-    else:
-        r = r - RecPart(n-1,k-1)
-        bloc, r = (r//RecPart(n-1,k), r%RecPart(n-1,k))
-
-        partition = generatorPartition_unranking(n - 1, k, r)
-
-        partition[bloc].append(n)
-        return partition
-
-
-def BellNumber(n,k):
+def generator(n,k):
     if n == 0:
-        return 1
-    else:
-        sum = 0
-        for i in range(0,k+1):
-            sum += RecPart(n,i)
-        return sum
+        []
+    if n != k:
+        return []
+    partition = []
+    for i in range(n):
+        partition.append(i)
 
-print(BellNumber(4,4))
-#print(generatorPartition_unranking(5,3,0))
+    return fisherYates(partition)
 
-def Bellnumber_partition_unranking(n,k,r):
-    index = 0
-    for i in range(1,k+1):
-        r = r - RecPart(n,i)
-        if r < 0 :
-            index = i
-            r = r + RecPart(n , i)
-            break
 
-    return generatorPartition_unranking(n,index,r)
+def uniformite8(n,k):
+    l = []
+    for i in range (1000000):
+        sl = generator(n,k)
+        inn = False
+        for j in l:
+            if j[0] == sl :
+                j[1] += 1
+                inn = True
+                break
+        if not inn :
+            l.append([sl, 1])
+    for j in l:
+        print("p( ", j[0], " ) = ", j[1]/10000)
+    return l
 
-for j in range(15):
-    print(Bellnumber_partition_unranking(4,4,j))
-
+print(permutation_Formula(3,3))
+print(uniformite8(3,3))

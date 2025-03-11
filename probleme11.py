@@ -31,7 +31,7 @@ def uniformite11(k,n):
         inn = False
         for j in l:
             if j[0] == sl2 :
-                j[1] += 1
+                j[1] += 1   
                 inn = True
                 break
         if not inn :
