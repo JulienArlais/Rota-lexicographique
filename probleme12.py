@@ -1,16 +1,27 @@
 import random
 import functools
-import sys
 
 """
- idk if my uniformity is correct
- 
+Integer Partition
+P(n) = p(n-1) +  ..... + p(0)
+
+And Pk(n) = Pk-1(n-1) + Pk(n-k)
+Pk(n-k) means n-k elems onto k parts   
+P(n-1) =  Partitions of n-1 into k-1 parts
+
 """
+
+"""
+the way i understood it is : 
+P(n-1) =  Partitions of n-1 into k-1 parts
+we place one ball into the box and we search in n-1 for k-1 boxes
+
+And the other means we take k elems from n and we palce them into k boxs
+"""
+
 @functools.lru_cache(maxsize=None)
 def P(n, k):
     """ Computes the number of ways to partition n into k positive parts. """
-    if k == 0:
-        return 0
     if k > n:
         return 0  # Cannot partition if more parts than elements
     if k == n or k == 1:
@@ -37,39 +48,14 @@ def P_generator(n, k,r):
         return [x + 1 for x in partition]  # Shift partition to ensure positivity
 
 
-def Generator(n,k,r):
-    index = 0
-    for i in range(1,k+1):
-        r = r - P(n,i)
-        if r < 0:
-            index = i
-            r = r + P(n , i)
-            break
+def gen_P(n,k):
+    r = random.randint(1, P(n,k))
+    return P_generator(n,k,r)
 
-    return P_generator(n,index,r)
-
-
-
-def Un_P(n,k):
-    sum = 0
-    for i in range(1,k+1):
-        sum += P(n,i)
-    return sum
-
-
-print(Un_P(8,3))
-
-for j in range(10):
-    print(Generator(8,3,j))
-
-"""
-def gen(n,k):
-    r = random.randint(1, Un_P(n,k)-1)
-    return Generator(n,k,r)
-def uniformite10(n,k):
+def uniformite12(n,k):
     l = []
     for i in range (1000000) :
-        sl = gen(n, k)
+        sl = gen_P(n, k)
         inn = False
         for j in l:
             if j[0] == sl :
@@ -82,6 +68,5 @@ def uniformite10(n,k):
         print("p( ", j[0], " ) = ", j[1]/10000)
     return l
 
-uniformite10(8,3)
-
-"""
+print(P(10, 3))  # Nb partitions possible
+uniformite12(10,3)
