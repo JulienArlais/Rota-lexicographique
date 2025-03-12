@@ -1,21 +1,49 @@
 import random
 import sys
 
+
+"""
+ k = range
+ n = sequence size
+ 
+"""
 def n_sequence(k,n):
     if k < n :
         raise ValueError("k doit être >= n")
     if n == 0 :
         return []
-    
+
     val = random.randint(1, k)
     l = n_sequence(k, n-1)
     l.append(val)
     return l
 
+
+def n_sequence_unranking(k, n, r):
+    if k < n:
+        raise ValueError("k doit être >= n")
+    if n == 0:
+        return []
+    print(" r = " ,r)
+    val = (r % k) + 1  # value between 1 and k
+    r //=k
+    return [val] + n_sequence_unranking(k,n-1,r)
+
+
+def gen_sequence(n,k):
+    r = random.randint(1, k**n - 1 )
+    return n_sequence_unranking(k,n,r)
+"""
+ val can be [1,2,3,4,5,6,7,8,...k-1]
+ 
+ so we can get like 9 , then remove 1/k
+ 
+ generating enough of a big number to be able to remove a digit at a time nad have each one of it work as a random placement
+"""
 def uniformite(k,n):
     l = []
     for i in range (1,1000000) :
-        sl = n_sequence(k,n)
+        sl = gen_sequence(n,k)
         inn = False
         for j in l:
             if j[0] == sl :
@@ -26,10 +54,8 @@ def uniformite(k,n):
             l.append([sl, 0])
     for j in l:
         print("p( ", j[0], " ) = ", j[1]/10000)
-
-if (len(sys.argv) != 3) :
-    raise TypeError("Il faut 2 arguments : k suivi de n")
-k = int(sys.argv[1])
-n = int(sys.argv[2])
-print("Nb de combinaisons : ", k**n)
-uniformite(k,n)
+k = 12
+n = 5
+print(n_sequence_unranking(k,n,random.randint(1, k**n - 1)))
+print("--------")
+#uniformite(k,n)

@@ -1,6 +1,10 @@
 import random
 import functools
-
+"""
+n marked balls into x plain boxes
+meaning that we do put importance into n but because the order that we put them in in the end doesnt matter,
+it ovverrides the order effect so in the end the order doesnt matter
+"""
 def fact(i):
     if i == 00 or i == 1:
         return 1

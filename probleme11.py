@@ -1,7 +1,15 @@
 import random
 import functools
 import sys
+"""
+It'll give the same result as problem 8
 
+The order here doesnt matter  for both N and X 
+so no matter way we put it it wot matter plus
+because we have injective where it means no two elements can point into the same elem , so order matters
+and because the maximum we can have per urn is 1 then we'll only have one result
+
+"""
 @functools.lru_cache(maxsize=None)
 def RecPart11(k, n):
     if k < n: 
