@@ -14,13 +14,25 @@ def coeff_bin(k, n):
         return coeff_bin(k - 1, n) + coeff_bin(k - 1, n - 1)
 
 def CompNKGen(k, n):
-    if n == 0:
-        return []
     if k > n :
         raise ValueError("k doit être <= n")
-    r = random.randint(1, coeff_bin(n-1, n-k))
-    return auxCompNKGen(k, n, r, 0)
+    return auxCompNKGen(k, n, 0)
 
+def auxCompNKGen(k, n, i):
+    if k == n:
+        l = []
+        for i in range(k):
+            l.append(i)
+        return l
+    if n == 0:
+        return []
+    r = random.randint(1, coeff_bin(n-1-i, n-k))
+    val = coeff_bin(n - 2 - i, n - k - 1)
+    if r <= val:
+        return auxCompNKGen(k, n - 1, i) + [i]
+    else:
+        return auxCompNKGen(k, n, i + 1)
+    
 """
 (n-1, ,n-k ) is what we're doing
 so when applying combinatrics logic where
@@ -33,24 +45,29 @@ in combinatorics
 
 (n-1,k-1) meaning we took one elem and put it in k 
 """
-def auxCompNKGen(k, n, r, i):
+
+def CompNKGen_unranking(k, n):
+    if n == 0:
+        return []
+    if k > n :
+        raise ValueError("k doit être <= n")
+    r = random.randint(1, coeff_bin(n-1, n-k))
+    return auxCompNKGen_unranking(k, n, r, 0)
+
+def auxCompNKGen_unranking(k, n, r, i):
     if k == n:
         l = []
         for i in range(k):
-            #print("i : ", i)
-            #print(" k ", k)
             l.append(i)
         return l
     if n == 0:
         return []
     val = coeff_bin(n - 2 - i, n - k - 1)
     if r <= val:
-        #print("adding i : " ,i)
-        return auxCompNKGen(k, n - 1, r, i) + [i]
+        return auxCompNKGen_unranking(k, n - 1, r, i) + [i]
     else:
         r = r - val
-        #print("adding to I : ", i)
-        return auxCompNKGen(k, n, r, i + 1)
+        return auxCompNKGen_unranking(k, n, r, i + 1)
 
 def uniformite6(k,n):
     l = []
@@ -73,5 +90,11 @@ if (len(sys.argv) != 3) :
 k = int(sys.argv[1])
 n = int(sys.argv[2])
 print("Nb : ", coeff_bin(n-1,n-k))
+
+# Test de la fonction naive
 res = uniformite6(k,n)
 print(len(res))
+
+# Test de l'unranking
+for i in range(1,coeff_bin(n-1,n-k)+1):
+    print(auxCompNKGen_unranking(k,n,i,0))
