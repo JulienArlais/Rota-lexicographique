@@ -17,8 +17,7 @@ def P(n, k):
         return 1  # Only one way to split n into n parts (1+1+...+1) or one part (n)
     return P(n-1, k-1) + P(n-k, k)
 
-
-def P_generator(n, k,r):
+def P_generator(n, k, r):
     """ Generates a partition of n into k parts. """
     if k > n :
         return []
@@ -36,7 +35,6 @@ def P_generator(n, k,r):
         partition = P_generator(n - k, k, r)
         return [x + 1 for x in partition]  # Shift partition to ensure positivity
 
-
 def Generator(n,k,r):
     index = 0
     for i in range(1,k+1):
@@ -48,28 +46,30 @@ def Generator(n,k,r):
 
     return P_generator(n,index,r)
 
-
-
 def Un_P(n,k):
-    sum = 0
-    for i in range(1,k+1):
-        sum += P(n,i)
-    return sum
+    return P(n+k,k)
+    # sum = 0
+    # for i in range(1,k+1):
+    #     sum += P(n,i)
+    # return sum
+
+n = 8
+k = 3
+print("Nb : ", Un_P(n,k))
+
+# Test de l'unranking
+for j in range(0, Un_P(n,k)):
+    print(Generator(n,k,j))
 
 
-print(Un_P(8,3))
-
-for j in range(10):
-    print(Generator(8,3,j))
-
-"""
-def gen(n,k):
-    r = random.randint(1, Un_P(n,k)-1)
+def gen_unranking(n,k):
+    r = random.randint(0, Un_P(n,k))
     return Generator(n,k,r)
+
 def uniformite10(n,k):
     l = []
     for i in range (1000000) :
-        sl = gen(n, k)
+        sl = gen_unranking(n, k)
         inn = False
         for j in l:
             if j[0] == sl :
@@ -82,6 +82,5 @@ def uniformite10(n,k):
         print("p( ", j[0], " ) = ", j[1]/10000)
     return l
 
-uniformite10(8,3)
+uniformite10(5,3)
 
-"""

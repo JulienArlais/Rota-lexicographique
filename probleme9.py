@@ -56,10 +56,10 @@ def generatorPartition(n,k):
         return partition
 
 
-
 def partitions_gen(n,k):
     r = random.randint(1, RecPart(n, k) - 1)
     return generatorPartition_unranking(n,k,r)
+
 def generatorPartition_unranking(n,k,r):
     if n == k:
         return [[i] for i in range(1, n + 1)]
@@ -69,7 +69,7 @@ def generatorPartition_unranking(n,k,r):
         return []
     if r < RecPart(n-1, k-1):
         partition = generatorPartition_unranking(n - 1, k - 1, r)
-        partition.append([n])  # Add n as a new subset
+        partition.append([n])
         return partition
     else:
         r = r - RecPart(n-1,k-1)
@@ -84,7 +84,7 @@ def generatorPartition_unranking(n,k,r):
 def uniformite9(n,k):
     l = []
     for i in range (1000000) :
-        sl = partitions_gen(n, k)
+        sl = generatorPartition(n, k)
         inn = False
         for j in l:
             if j[0] == sl :
@@ -97,4 +97,13 @@ def uniformite9(n,k):
         print("p( ", j[0], " ) = ", j[1]/10000)
     return l
 
-uniformite9(5,3)
+n = 5
+k = 3
+print("Nb : ", RecPart(n,k))
+
+# Test de la fonction naive
+uniformite9(n,k)
+
+# Test de l'unranking
+for i in range(0,RecPart(n,k)):
+    print(generatorPartition_unranking(n,k,i))

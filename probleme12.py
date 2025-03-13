@@ -28,8 +28,29 @@ def P(n, k):
         return 1  # Only one way to split n into n parts (1+1+...+1) or one part (n)
     return P(n-1, k-1) + P(n-k, k)
 
+def gen_P(n, k):
+    """ Generates a partition of n into k parts. """
+    if k > n :
+        return []
+    if k <= 0 :
+        return []
+    if k == 1:
+        return [n]
+    if k == n:
+        return [1] * n
+    r = random.randint(1, P(n,k))
+    if r <= P(n - 1, k - 1):
+        return [1] + gen_P(n - 1, k - 1)
+    else:
+        r = r - P(n - 1, k - 1)
+        partition = gen_P(n - k, k)
+        return [x + 1 for x in partition]
 
-def P_generator(n, k,r):
+def gen_P_unranking(n,k):
+    r = random.randint(1, P(n,k))
+    return P_generator_unranking(n,k,r)
+
+def P_generator_unranking(n, k, r):
     """ Generates a partition of n into k parts. """
     if k > n :
         return []
@@ -41,16 +62,11 @@ def P_generator(n, k,r):
         return [1] * n
     # Randomly pick between the two cases, weighted by number of partitions
     if r <= P(n - 1, k - 1):
-        return [1] + P_generator(n - 1, k - 1, r)
+        return [1] + P_generator_unranking(n - 1, k - 1, r)
     else:
         r = r - P(n - 1, k - 1)
-        partition = P_generator(n - k, k, r)
+        partition = P_generator_unranking(n - k, k, r)
         return [x + 1 for x in partition]  # Shift partition to ensure positivity
-
-
-def gen_P(n,k):
-    r = random.randint(1, P(n,k))
-    return P_generator(n,k,r)
 
 def uniformite12(n,k):
     l = []
@@ -68,5 +84,14 @@ def uniformite12(n,k):
         print("p( ", j[0], " ) = ", j[1]/10000)
     return l
 
-print(P(10, 3))  # Nb partitions possible
-uniformite12(10,3)
+
+n = 10
+k = 3
+print("Nb : ", P(n, k))  # Nb partitions possible
+
+# Test de la fonction naive
+uniformite12(n,k)
+
+# Test de l'unranking
+for i in range(1, P(n,k)+1):
+    print(P_generator_unranking(n,k,i))
