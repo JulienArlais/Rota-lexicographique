@@ -1,12 +1,10 @@
 import functools
 import random
-import sys
-
 
 """
 read more bout the way its selecting , both it & the first one
-
 """
+
 def fact(i):
     if i == 00 or i == 1:
         return 1
@@ -34,29 +32,6 @@ def n_permutation_aux(k, n, l):
     res.append(i)
     return res
 
-
-def n_permutation_unranking(k,n):
-    if k < n :
-        raise ValueError("k doit être >= n")
-    l = [i for i in range(1,k+1)]
-    return n_permutation_aux_unranking(k,n,l, int(random.randint(1, nb_possibilites(k,n) - 1 )))
-
-
-"""
-    we're getting  f as factorial from len and everytime its getting smaller by 1 so its like doing
-    6! then 5! then 4! , so no repetition
-    and we use r as like a random picker
-"""
-def n_permutation_aux_unranking(k,n,l,r):
-    if n == 0 :
-        return []
-    f = fact(len(l) - 1 )
-    index = r // f  # Determine which element to pick
-    r %= f  # Update rank for the next recursive call
-    val = l.pop(index)
-
-    return [val] + n_permutation_aux_unranking(k,n-1,l,r)
-
 def uniformite(k,n):
     l = []
     for i in range (1,1000000) :
@@ -73,17 +48,37 @@ def uniformite(k,n):
         print("p( ", j[0], " ) = ", j[1]/10000)
 
 
+# Unranking et lexicographique
+
+def n_permutation_unranking(k,n):
+    if k < n :
+        raise ValueError("k doit être >= n")
+    l = [i for i in range(1,k+1)]
+    return n_permutation_aux_unranking(k,n,l, int(random.randint(1, nb_possibilites(k,n) - 1 )))
+
+"""
+    we're getting f as falling factorial from len and everytime it's getting smaller by 1 so it's like doing
+    6! then 5! then 4!, so no repetition
+    and we use r as like a random picker
 """
 
-if (len(sys.argv) != 3) :
-    raise TypeError("Il faut 2 arguments : k suivi de n")
-k = int(sys.argv[1])
-n = int(sys.argv[2])
-print("Nb de combinaisons : ", int(nb_possibilites_2(k,n)))
-"""
-k = 5
-n = 3
+def n_permutation_aux_unranking(k,n,l,r):
+    if n == 0 :
+        return []
+
+    f = nb_possibilites(k-1, n-1)
+    index = r // f   # Determine which element to pick
+    r %= f           # Update rank for the next recursive call
+    val = l.pop(index)
+
+    return [val] + n_permutation_aux_unranking(k-1,n-1,l,r)
+
+k = 4
+n = 2
+# Test de la fonction naive
+# uniformite(k,n)
+
+# Test de l'unranking et lexicographique
 print("Nb : ", nb_possibilites(k,n))
 for i in range (0, nb_possibilites(k,n) ) :
     print(n_permutation_aux_unranking(k,n,[i for i in range(1,k+1)],i))
-#uniformite(k,n)
