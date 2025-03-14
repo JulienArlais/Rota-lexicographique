@@ -83,5 +83,7 @@ print("Nb de combinaisons : ", int(nb_possibilites_2(k,n)))
 """
 k = 5
 n = 3
-print(n_permutation_unranking(k,n))
-uniformite(k,n)
+print("Nb : ", nb_possibilites(k,n))
+for i in range (0, nb_possibilites(k,n) ) :
+    print(n_permutation_aux_unranking(k,n,[i for i in range(1,k+1)],i))
+#uniformite(k,n)
