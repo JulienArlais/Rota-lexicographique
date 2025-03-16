@@ -40,6 +40,7 @@ def generator(n,k):
         return generator(n-1, k-1) + [n]
 
 
+
 def unrank_generator(n,k,r):
     if k == 0:
         return []
@@ -55,6 +56,7 @@ def unrank_generator(n,k,r):
 def Comb(n,k):
     r = random.randint(1,RecComb(n,k)-1)
     return unrank_generator(n,k,r)
+
 def uniformComb(n,k):
     l = []
     for i in range (1000000) :
@@ -71,9 +73,20 @@ def uniformComb(n,k):
         print("p( ", j[0], " ) = ", j[1]/10000)
     return l
 
+def unrank_generator_lexico(n,k,r):
+    l = []
+    x = 1
+    for i in range (1, k+1):
+        while RecComb(n-x, k-i) <= r :
+            r = r - RecComb(n-x, k-i)
+            x = x + 1
+        l.append(x)
+        x = x + 1
+    return l
 
-print(RecComb(8,6))
-for i in range(28):
-    print(unrank_generator(8,6,i))
 
-uniformComb(8,6)
+n = 5
+k = 3
+print("Nb :", RecComb(n,k))
+for i in range(RecComb(n,k)):
+    print(unrank_generator_lexico(n,k,i))
