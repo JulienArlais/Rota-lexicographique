@@ -78,15 +78,22 @@ def auxMultiCombGen_lexico(n, k, r):
             x += 1
         l.append(x)
     return l
+def auxMultiCombGen_unranking(k, n, r, i):
+    if n == 0:
+        return []
+    if r <= coeff_bin(k - i + n - 1, n - 1):
+        return [i] + auxMultiCombGen_unranking(k, n - 1, r, i)
+    else:
+        r = r - coeff_bin(k - i + n - 1, n - 1)
+        return auxMultiCombGen_unranking(k, n, r, i + 1)
 
-
-k = 5
-n = 3
+k = 6
+n = 4
 print("Nb : ", coeff_bin(k+n-1,n))
 # Tests
-# print(uniformite4(k,n))
-# for i in range(1,coeff_bin(k+n-1,n)+1):
-#     print(auxMultiCombGen_unranking(k,n,i,1))
+#print(uniformite4(k,n))
+#for i in range(1,coeff_bin(k+n-1,n)+1):
+  #   print(auxMultiCombGen_unranking(k,n,i,1))
 
 for i in range(0,coeff_bin(k+n-1,n)):
     print(auxMultiCombGen_lexico(k,n,i))

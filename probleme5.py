@@ -80,7 +80,7 @@ def unrank_generator_lexico(n,k,r):
         while RecComb(n-x, k-i) <= r :
             r = r - RecComb(n-x, k-i)
             x = x + 1
-        l.append(x)
+        l.append(x) # found the number
         x = x + 1
     return l
 

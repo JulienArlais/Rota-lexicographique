@@ -107,3 +107,26 @@ uniformite9(n,k)
 # Test de l'unranking
 for i in range(0,RecPart(n,k)):
     print(generatorPartition_unranking(n,k,i))
+
+
+def get_block(n,k,rank, prefix):
+    r = rank
+    l,d= 1
+    # l = length prefix
+    #  d = final number??
+    nbPartitions = RecPart(n,k)
+    exactly = False
+    block = []
+    while r != nbPartitions and r > 0:
+        if r < nbPartitions:
+            block.append(prefix)
+            exactly = True
+            continue
+        else:
+            if exactly:
+                if rank == nbPartitions:
+                    break
+            else:
+                # Case for when r > nbPartitions and not exactly
+                rank -= nbPartitions
+

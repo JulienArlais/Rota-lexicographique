@@ -53,58 +53,44 @@ def gen_partition_unranking(n,k):
     r = random.randint(0, Un_P(n,k)-1)
     return Generator(n,k,r)
 
+"""
+ changed it to match the logic in the bell number so that we wont have 
+ different algorithms for each one
+"""
 def Generator(n, k, r):
     index = 0
     for i in range(1, k+1):
-        cpt = P(n, i)
-        if r < cpt:
+        r = r - P(n, i)
+        if r < 0:
             index = i
+            r = r + P(n, i)
             break
-        r = r - cpt
     return P_generator_unranking(n, index, r)
 
 def P_generator_unranking(n, k, r):
     """ Generates a partition of n into k parts. """
-    if k > n:
+    if k > n :
+        return []
+    if k <= 0 :
         return []
     if k == 1:
         return [n]
     if k == n:
         return [1] * n
     # Randomly pick between the two cases, weighted by number of partitions
-    val = P(n - 1, k - 1)
-    if r < val:
+    if r < P(n - 1, k - 1):
         return [1] + P_generator_unranking(n - 1, k - 1, r)
     else:
-        r = r - val
-        partition = P_generator_unranking(n - 1, k, r)
-        partition[0] += 1
-        return partition
+        r = r - P(n - 1, k - 1)
+        partition = P_generator_unranking(n - k, k, r)
+        return [x + 1 for x in partition]  # Shift partition to ensure positivity
 
-
-def uniformite10(n,k):
-    l = []
-    for i in range (1000000) :
-        sl = gen_partition(n, k)
-        inn = False
-        for j in l:
-            if j[0] == sl :
-                j[1] += 1
-                inn = True
-                break
-        if not inn :
-            l.append([sl, 1])
-    for j in l:
-        print("p( ", j[0], " ) = ", j[1]/10000)
-    return l
-
-
-n = 5
-k = 3
+n = 8
+k = 4
 print("Nb : ", Un_P(n, k))
 
 # Test de la fonction naive
-uniformite10(n,k)
+#uniformite10(n,k)
 
 # Test de l'unranking
 for j in range(0, Un_P(n, k)):

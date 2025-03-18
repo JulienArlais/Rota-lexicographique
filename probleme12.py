@@ -85,8 +85,8 @@ def uniformite12(n,k):
     return l
 
 
-n = 10
-k = 3
+n = 5
+k = 2
 print("Nb : ", P(n, k))  # Nb partitions possible
 
 # Test de la fonction naive

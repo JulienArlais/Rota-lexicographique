@@ -25,32 +25,12 @@ def fisherYates(l):
     return l
 
 def generator(n,k):
-    if n == 0:
-        []
-    if n != k:
-        return []
-    partition = []
-    for i in range(n):
-        partition.append(i)
-
-    return fisherYates(partition)
+    if k < n :
+        return ValueError("K has to be superior or equal to n")
+    partition = [0] * k
+    for i in range(1,n+1):
+        partition[i-1] = i
+    return partition
 
 
-def uniformite8(n,k):
-    l = []
-    for i in range (1000000):
-        sl = generator(n,k)
-        inn = False
-        for j in l:
-            if j[0] == sl :
-                j[1] += 1
-                inn = True
-                break
-        if not inn :
-            l.append([sl, 1])
-    for j in l:
-        print("p( ", j[0], " ) = ", j[1]/10000)
-    return l
-
-print(permutation_Formula(3,3))
-print(uniformite8(3,3))
+print(generator(3,5))
