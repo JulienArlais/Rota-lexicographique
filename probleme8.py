@@ -16,14 +16,6 @@ def permutation_Formula(n,k):
     return fact(n)/fact(n-k)
 
 
-def fisherYates(l):
-    for i in range (len(l)-1):
-        r = random.randint(i,len(l)-1)
-        tmp = l[i]
-        l[i] = l[r]
-        l[r] = tmp
-    return l
-
 def generator(n,k):
     if k < n :
         return ValueError("K has to be superior or equal to n")

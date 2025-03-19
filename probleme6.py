@@ -63,14 +63,14 @@ def CompNKGen_unranking(k, n):
 def auxCompNKGen_unranking(k, n, r, i):
     if k == n:
         l = []
-        for i in range(k+1):
+        for i in range(1, k+1):
             l.append(i)
         return l
     if n == 0:
         return []
-    val = coeff_bin(n - 2 - i, n - k - 1)
+    val = coeff_bin(n - 1 - i, n - k - 1)
     if r <= val:
-        return auxCompNKGen_unranking(k, n - 1, r, i) + [i]
+        return sorted(auxCompNKGen_unranking(k, n - 1, r, i) + [i])
     else:
         r = r - val
         return auxCompNKGen_unranking(k, n, r, i + 1)
@@ -92,14 +92,27 @@ def uniformite6(k, n):
         print("p( ", j[0], " ) = ", j[1] / 10000)
     return l
 
+# Lexicographique
+
+def P_generator_unranking(n, k, r):
+    if k > n or k <= 0:
+        return []
+    if k == 1:
+        return [n]
+
+    for i in range(1, n - k + 2):
+        val = coeff_bin(n - 1 - i, k - 2)
+        if r < val:
+            return [i] + P_generator_unranking(n - i, k - 1, r)
+        r = r - val
 
 
-k = 3
-n = 5
+n = 10
+k = 4
 # Test de la fonction naive
-res = uniformite6(k, n)
-print(len(res))
+#res = uniformite6(k, n)
 
 # Test de l'unranking
-for i in range(1, coeff_bin(n - 1, n - k) + 1):
-    print(auxCompNKGen_unranking(k, n, i, 0))
+print("Nb :", coeff_bin(n-1, n-k))
+for i in range(coeff_bin(n - 1, n - k)):
+    print(P_generator_unranking(n, k, i))

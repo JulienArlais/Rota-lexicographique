@@ -30,9 +30,7 @@ def P(n, k):
 
 def gen_P(n, k):
     """ Generates a partition of n into k parts. """
-    if k > n :
-        return []
-    if k <= 0 :
+    if k > n or k <= 0 :
         return []
     if k == 1:
         return [n]
@@ -52,9 +50,7 @@ def gen_P_unranking(n,k):
 
 def P_generator_unranking(n, k, r):
     """ Generates a partition of n into k parts. """
-    if k > n :
-        return []
-    if k <= 0 :
+    if k > n or k <= 0 :
         return []
     if k == 1:
         return [n]
@@ -85,8 +81,8 @@ def uniformite12(n,k):
     return l
 
 
-n = 5
-k = 2
+n = 10
+k = 4
 print("Nb : ", P(n, k))  # Nb partitions possible
 
 # Test de la fonction naive
