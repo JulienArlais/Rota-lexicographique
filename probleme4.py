@@ -26,24 +26,22 @@ def auxMultiCombGen(k, n, i):
     else:
         return auxMultiCombGen(k, n, i + 1)
 
-def MultiCombGen_unranking(k, n):
+def MultiCombGen_lexico(k, n):
     if k < n :
         raise ValueError("k doit être >= n")
     if n == 0:
         return []
     r = random.randint(0, coeff_bin(k + n - 1, n))
-    return auxMultiCombGen_unranking(k, n, r, 0)
+    return auxMultiCombGen_lexico(k, n, r, 0)
 
-# Techniquement lexicographique mais nécessite 4 param et r commence à 1
-# donc on ne conserve pas cette fonction pour la gén. lexicographique
-def auxMultiCombGen_unranking(k, n, r, i):
+def auxMultiCombGen_lexico(k, n, r, i):
     if n == 0:
         return []
-    if r <= coeff_bin(k - i + n - 1, n - 1):
-        return [i] + auxMultiCombGen_unranking(k, n - 1, r, i)
+    if r < coeff_bin(k - i + n - 1, n - 1):
+        return [i] + auxMultiCombGen_lexico(k, n - 1, r, i)
     else:
         r = r - coeff_bin(k - i + n - 1, n - 1)
-        return auxMultiCombGen_unranking(k, n, r, i + 1)
+        return auxMultiCombGen_lexico(k, n, r, i + 1)
 
 def uniformite4(k,n):
     l = []
@@ -61,15 +59,13 @@ def uniformite4(k,n):
         print("p( ", j[0], " ) = ", j[1]/10000)
 
 
-# Version lexicographique
-
-def MultiCombGen_lexico(k, n):
+def MultiCombGen_lexico2(k, n):
     if k < n :
         raise ValueError("k doit être >= n")
     r = random.randint(0, coeff_bin(k + n - 1, n))
     return auxMultiCombGen_lexico(k, n, r)
 
-def auxMultiCombGen_lexico(n, k, r):
+def auxMultiCombGen_lexico2(n, k, r):
     l = []
     x = 1
     for i in range(1, k + 1):
@@ -78,22 +74,15 @@ def auxMultiCombGen_lexico(n, k, r):
             x += 1
         l.append(x)
     return l
-def auxMultiCombGen_unranking(k, n, r, i):
-    if n == 0:
-        return []
-    if r <= coeff_bin(k - i + n - 1, n - 1):
-        return [i] + auxMultiCombGen_unranking(k, n - 1, r, i)
-    else:
-        r = r - coeff_bin(k - i + n - 1, n - 1)
-        return auxMultiCombGen_unranking(k, n, r, i + 1)
 
-k = 6
-n = 4
+
+k = 5
+n = 3
 print("Nb : ", coeff_bin(k+n-1,n))
 # Tests
 #print(uniformite4(k,n))
-#for i in range(1,coeff_bin(k+n-1,n)+1):
-  #   print(auxMultiCombGen_unranking(k,n,i,1))
-
 for i in range(0,coeff_bin(k+n-1,n)):
-    print(auxMultiCombGen_lexico(k,n,i))
+    print(auxMultiCombGen_lexico(k,n,i,1))
+
+# for i in range(0,coeff_bin(k+n-1,n)):
+#     print(auxMultiCombGen_lexico2(k,n,i))
