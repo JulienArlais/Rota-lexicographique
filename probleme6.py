@@ -94,17 +94,17 @@ def uniformite6(k, n):
 
 # Lexicographique
 
-def P_generator_unranking(n, k, r):
-    if k > n or k <= 0:
+def auxCompNKGen_lexico(n, k, r, i):
+    if k > n or k <= 0 :
         return []
     if k == 1:
         return [n]
 
-    for i in range(1, n - k + 2):
-        val = coeff_bin(n - 1 - i, k - 2)
-        if r < val:
-            return [i] + P_generator_unranking(n - i, k - 1, r)
-        r = r - val
+    val = coeff_bin(n - 1 - i, k - 2)
+    if r < val:
+        return [i] + auxCompNKGen_lexico(n - i, k - 1, r, 1)
+    else:
+        return auxCompNKGen_lexico(n, k, r - val, i + 1)
 
 
 n = 10
@@ -115,4 +115,4 @@ k = 4
 # Test de l'unranking
 print("Nb :", coeff_bin(n-1, n-k))
 for i in range(coeff_bin(n - 1, n - k)):
-    print(P_generator_unranking(n, k, i))
+    print(auxCompNKGen_lexico(n, k, i, 1))
