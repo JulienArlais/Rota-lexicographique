@@ -44,26 +44,6 @@ def gen_P(n, k):
         partition = gen_P(n - k, k)
         return [x + 1 for x in partition]
 
-def gen_P_unranking(n,k):
-    r = random.randint(1, P(n,k))
-    return P_generator_unranking(n,k,r)
-
-def P_generator_unranking(n, k, r):
-    """ Generates a partition of n into k parts. """
-    if k > n or k <= 0 :
-        return []
-    if k == 1:
-        return [n]
-    if k == n:
-        return [1] * n
-    # Randomly pick between the two cases, weighted by number of partitions
-    if r <= P(n - 1, k - 1):
-        return [1] + P_generator_unranking(n - 1, k - 1, r)
-    else:
-        r = r - P(n - 1, k - 1)
-        partition = P_generator_unranking(n - k, k, r)
-        return [x + 1 for x in partition]  # Shift partition to ensure positivity
-
 def uniformite12(n,k):
     l = []
     for i in range (1000000) :
@@ -81,13 +61,48 @@ def uniformite12(n,k):
     return l
 
 
+# Lexicographique 
+
+def gen_P_unranking(n,k):
+    r = random.randint(0, P(n,k)-1)
+    return P_generator_unranking(n,k,r)
+
+def P_generator_unranking(n, k, r):
+    """ Generates a partition of n into k parts. """
+    if k > n or k <= 0 :
+        return []
+    if k == 1:
+        return [n]
+    if k == n:
+        return [1] * n
+    # Randomly pick between the two cases, weighted by number of partitions
+    if r < P(n - 1, k - 1):
+        return [1] + P_generator_unranking(n - 1, k - 1, r)
+    else:
+        r = r - P(n - 1, k - 1)
+        partition = P_generator_unranking(n - k, k, r)
+        return [x + 1 for x in partition]  # Shift partition to ensure positivity
+
+# Invariant
+
+def dans_ordre_lexico(e1, e2) : 
+    for i in range(len(e1)) :
+        if ( e1[i] < e2[i] ) :
+            return True
+        elif ( e1[i] > e2[i] ) :
+            return False
+    return False
+
+def invariant_P_generator(n, k, r=0):
+    if (r == P(n,k) - 1) :
+        return True
+    return dans_ordre_lexico(P_generator_unranking(n,k,r), P_generator_unranking(n,k,r+1)) and invariant_P_generator(n, k, r+1)
+
 n = 10
 k = 4
 print("Nb : ", P(n, k))  # Nb partitions possible
 
-# Test de la fonction naive
-uniformite12(n,k)
-
 # Test de l'unranking
-for i in range(1, P(n,k)+1):
+for i in range(0, P(n,k)):
     print(P_generator_unranking(n,k,i))
+print("Invariant ?", invariant_P_generator(n,k))

@@ -26,6 +26,24 @@ def auxMultiCombGen(k, n, i):
     else:
         return auxMultiCombGen(k, n, i + 1)
 
+def uniformite4(k,n):
+    l = []
+    for i in range (1000000) :
+        sl = MultiCombGen(k, n)
+        inn = False
+        for j in l:
+            if j[0] == sl :
+                j[1] += 1
+                inn = True
+                break
+        if not inn :
+            l.append([sl, 1])
+    for j in l:
+        print("p( ", j[0], " ) = ", j[1]/10000)
+
+
+# Lexicographique
+
 def MultiCombGen_lexico(k, n):
     if k < n :
         raise ValueError("k doit être >= n")
@@ -43,38 +61,21 @@ def auxMultiCombGen_lexico(k, n, r, i):
         r = r - coeff_bin(k - i + n - 1, n - 1)
         return auxMultiCombGen_lexico(k, n, r, i + 1)
 
-def uniformite4(k,n):
-    l = []
-    for i in range (1000000) :
-        sl = MultiCombGen(k, n)
-        inn = False
-        for j in l:
-            if j[0] == sl :
-                j[1] += 1
-                inn = True
-                break
-        if not inn :
-            l.append([sl, 1])
-    for j in l:
-        print("p( ", j[0], " ) = ", j[1]/10000)
 
+# Invariant
 
-def MultiCombGen_lexico2(k, n):
-    if k < n :
-        raise ValueError("k doit être >= n")
-    r = random.randint(0, coeff_bin(k + n - 1, n))
-    return auxMultiCombGen_lexico(k, n, r)
+def dans_ordre_lexico(e1, e2) : 
+    for i in range(len(e1)) :
+        if ( e1[i] < e2[i] ) :
+            return True
+        elif ( e1[i] > e2[i] ) :
+            return False
+    return False
 
-def auxMultiCombGen_lexico2(n, k, r):
-    l = []
-    x = 1
-    for i in range(1, k + 1):
-        while coeff_bin(n-x+k-i, k-i) <= r:
-            r -= coeff_bin(n-x+k-i, k-i)
-            x += 1
-        l.append(x)
-    return l
-
+def invariant_auxMultiCombGen(k, n, r=0):
+    if (r >= coeff_bin(k+n-1,n) - 1) :
+        return True
+    return dans_ordre_lexico(auxMultiCombGen_lexico(k,n,r,1), auxMultiCombGen_lexico(k,n,r+1,1)) and invariant_auxMultiCombGen(k, n, r+1)
 
 k = 5
 n = 3
@@ -83,6 +84,4 @@ print("Nb : ", coeff_bin(k+n-1,n))
 #print(uniformite4(k,n))
 for i in range(0,coeff_bin(k+n-1,n)):
     print(auxMultiCombGen_lexico(k,n,i,1))
-
-# for i in range(0,coeff_bin(k+n-1,n)):
-#     print(auxMultiCombGen_lexico2(k,n,i))
+print("Invariant ?", invariant_auxMultiCombGen(k,n))

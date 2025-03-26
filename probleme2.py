@@ -73,12 +73,26 @@ def n_permutation_aux_unranking(k,n,l,r):
 
     return [val] + n_permutation_aux_unranking(k-1,n-1,l,r)
 
+# Invariant
+
+def dans_ordre_lexico(e1, e2) : 
+    for i in range(len(e1)) :
+        if ( e1[i] < e2[i] ) :
+            return True
+        elif ( e1[i] > e2[i] ) :
+            return False
+    return False
+
+def invariant_n_permutation(k, n, r=0):
+    if (r >= nb_possibilites(k,n) - 1) :
+        return True
+    return dans_ordre_lexico(n_permutation_aux_unranking(k,n,[i for i in range(1,k+1)],r), n_permutation_aux_unranking(k,n,[i for i in range(1,k+1)],r+1)) and invariant_n_permutation(k, n, r+1)
+
 k = 4
 n = 2
-# Test de la fonction naive
-# uniformite(k,n)
 
 # Test de l'unranking et lexicographique
 print("Nb : ", nb_possibilites(k,n))
-for i in range (0, nb_possibilites(k,n) ) :
+for i in range (0, nb_possibilites(k,n)) :
     print(n_permutation_aux_unranking(k,n,[i for i in range(1,k+1)],i))
+print("Invariant ?", invariant_n_permutation(k,n))

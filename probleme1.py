@@ -54,10 +54,10 @@ def uniformite(k,n):
             l.append([sl, 0])
     for j in l:
         print("p( ", j[0], " ) = ", j[1]/10000)
-
-# print(n_sequence_unranking(k,n,random.randint(1, k**n - 1)))
-# print("--------")
 #uniformite(k,n)
+
+
+# Lexicographique
 
 def n_sequence_lexico(k, n, r):
     if k < n:
@@ -68,9 +68,26 @@ def n_sequence_lexico(k, n, r):
     r //=k
     return n_sequence_lexico(k,n-1,r) + [val]
 
+# Invariant
+
+def dans_ordre_lexico(e1, e2) : 
+    for i in range(len(e1)) :
+        if ( e1[i] < e2[i] ) :
+            return True
+        elif ( e1[i] > e2[i] ) :
+            return False
+    return False
+
+def invariant_n_sequence(k, n, r=0):
+    if (r >= k**n - 1) :
+        return True
+    return dans_ordre_lexico(n_sequence_lexico(k,n,r), n_sequence_lexico(k,n,r+1)) and invariant_n_sequence(k, n, r+1)
+
+
 # Test lexicographique
 k = 4
 n = 3
 print("Nb : ", k**n)
 for i in range (0,k**n):
     print(n_sequence_lexico(k,n,i))
+print("Invariant ?", invariant_n_sequence(k,n))

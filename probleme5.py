@@ -105,8 +105,24 @@ def unrankingRecursive(n, k, r) :
         l2[i] = n - l[k - 1 - i]
     return l2
 
+# Invariant
+
+def dans_ordre_lexico(e1, e2) : 
+    for i in range(len(e1)) :
+        if ( e1[i] < e2[i] ) :
+            return True
+        elif ( e1[i] > e2[i] ) :
+            return False
+    return False
+
+def invariant_unrankingRecursive(n, k, r=0):
+    if (r >= RecComb(n,k)-1) :
+        return True
+    return dans_ordre_lexico(unrankingRecursive(n,k,r), unrankingRecursive(n,k,r+1)) and invariant_unrankingRecursive(n, k, r+1)
+
 n = 5
 k = 3
 print("Nb :", RecComb(n,k))
 for i in range(RecComb(n,k)):
     print(unrankingRecursive(n,k,i))
+print("Invariant ?", invariant_unrankingRecursive(n, k))

@@ -106,13 +106,26 @@ def auxCompNKGen_lexico(n, k, r, i):
     else:
         return auxCompNKGen_lexico(n, k, r - val, i + 1)
 
+# Invariant
+
+def dans_ordre_lexico(e1, e2) : 
+    for i in range(len(e1)) :
+        if ( e1[i] < e2[i] ) :
+            return True
+        elif ( e1[i] > e2[i] ) :
+            return False
+    return False
+
+def invariant_auxCompNKGen(n, k, r=0):
+    if (r >= coeff_bin(n - 1, n - k) - 1) :
+        return True
+    return dans_ordre_lexico(auxCompNKGen_lexico(n,k,r,1), auxCompNKGen_lexico(n,k,r+1,1)) and invariant_auxCompNKGen(n, k, r+1)
 
 n = 10
 k = 4
-# Test de la fonction naive
-#res = uniformite6(k, n)
 
 # Test de l'unranking
 print("Nb :", coeff_bin(n-1, n-k))
 for i in range(coeff_bin(n - 1, n - k)):
     print(auxCompNKGen_lexico(n, k, i, 1))
+print("Invariant ?", invariant_auxCompNKGen(n,k))
