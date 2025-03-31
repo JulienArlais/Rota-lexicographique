@@ -5,7 +5,6 @@ import sys
 """
  k = range
  n = sequence size
- 
 """
 def n_sequence(k,n):
     if k < n :
@@ -24,7 +23,6 @@ def n_sequence_unranking(k, n, r):
         raise ValueError("k doit être >= n")
     if n == 0:
         return []
-    # print(" r = " ,r)
     val = (r % k) + 1  # value between 1 and k
     r //=k
     return [val] + n_sequence_unranking(k,n-1,r)
@@ -54,7 +52,6 @@ def uniformite(k,n):
             l.append([sl, 0])
     for j in l:
         print("p( ", j[0], " ) = ", j[1]/10000)
-#uniformite(k,n)
 
 
 # Lexicographique

@@ -124,7 +124,6 @@ def invariant_auxCompNKGen(n, k, r=0):
 n = 10
 k = 4
 
-# Test de l'unranking
 print("Nb :", coeff_bin(n-1, n-k))
 for i in range(coeff_bin(n - 1, n - k)):
     print(auxCompNKGen_lexico(n, k, i, 1))

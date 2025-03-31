@@ -80,8 +80,7 @@ def invariant_auxMultiCombGen(k, n, r=0):
 k = 5
 n = 3
 print("Nb : ", coeff_bin(k+n-1,n))
-# Tests
-#print(uniformite4(k,n))
+
 for i in range(0,coeff_bin(k+n-1,n)):
     print(auxMultiCombGen_lexico(k,n,i,1))
 print("Invariant ?", invariant_auxMultiCombGen(k,n))

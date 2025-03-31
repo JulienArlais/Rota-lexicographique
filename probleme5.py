@@ -8,8 +8,6 @@ def fact(i):
     else:
         return i * fact(i-1)
 
-
-
 def combination(n,k):
     return fact(n) / (fact(k) * fact(n-k))
 
@@ -73,17 +71,7 @@ def uniformComb(n,k):
         print("p( ", j[0], " ) = ", j[1]/10000)
     return l
 
-# def unrank_generator_lexico(n,k,r):
-#     l = []
-#     x = 1
-#     for i in range (1, k+1):
-#         while RecComb(n-x, k-i) <= r :
-#             r = r - RecComb(n-x, k-i)
-#             x = x + 1
-#         l.append(x) # found the number
-#         x = x + 1
-#     return l
-
+# Lexicographique
 
 def recGeneration(n, k, r) :
     if k == 0 :

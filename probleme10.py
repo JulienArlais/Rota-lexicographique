@@ -1,8 +1,6 @@
 import random
 import functools
 
-# Petit souci dans la version sans unranking mais la version avec marche
-
 @functools.lru_cache(maxsize=None)
 def P(n, k):
     """ Computes the number of ways to partition n into k positive parts. """

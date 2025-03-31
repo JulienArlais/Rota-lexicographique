@@ -1,10 +1,6 @@
 import functools
 import random
 
-"""
-read more bout the way its selecting , both it & the first one
-"""
-
 def fact(i):
     if i == 00 or i == 1:
         return 1
@@ -48,7 +44,7 @@ def uniformite(k,n):
         print("p( ", j[0], " ) = ", j[1]/10000)
 
 
-# Unranking et lexicographique
+# Unranking lexicographique
 
 def n_permutation_unranking(k,n):
     if k < n :
@@ -91,7 +87,7 @@ def invariant_n_permutation(k, n, r=0):
 k = 4
 n = 2
 
-# Test de l'unranking et lexicographique
+# Test de l'unranking lexicographique
 print("Nb : ", nb_possibilites(k,n))
 for i in range (0, nb_possibilites(k,n)) :
     print(n_permutation_aux_unranking(k,n,[i for i in range(1,k+1)],i))

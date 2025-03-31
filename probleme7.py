@@ -19,7 +19,6 @@ def RecComb(n, k):
  partition 
 """
 
-
 def fact(i):
     if i == 00 or i == 1:
         return 1
@@ -67,7 +66,7 @@ def generatorPartition_unranking(n,k,r):
         return []
     if r < RecPart(n-1, k-1):
         partition = generatorPartition_unranking(n - 1, k - 1, r)
-        partition.append([n])  # Add n as a new subset
+        partition.append([n]) 
         return partition
     else:
         r = r - RecPart(n-1,k-1)
@@ -88,9 +87,6 @@ def BellNumber(n,k):
             sum += RecPart(n,i)
         return sum
 
-print(BellNumber(4,4))
-#print(generatorPartition_unranking(5,3,0))
-
 def Bellnumber_partition_unranking(n,k,r):
     index = 0
     for i in range(1,k+1):
@@ -99,9 +95,14 @@ def Bellnumber_partition_unranking(n,k,r):
             index = i
             r = r + RecPart(n , i)
             break
-
     return generatorPartition_unranking(n,index,r)
 
-for j in range(15):
-    print(Bellnumber_partition_unranking(4,4,j))
+n = 4
+k = 4
+
+print(BellNumber(n,k))
+#print(generatorPartition_unranking(5,3,0))
+
+for j in range(BellNumber(n,k)):
+    print(Bellnumber_partition_unranking(n,k,j))
 
