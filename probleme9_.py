@@ -85,16 +85,18 @@ def stirling(n,k):
     return k*RecPart(n-1, k) + RecPart(n-1, k-1)
 
 def R_prefix(n,k,l,d0,d1):
-    left_sum = 0
-    right_sum = 0
-    max_val = n-k-l+1
-    for u in range(1, min(max_val, n-d0) +1 ):
-        left_sum += stirling(n-l-u,k-1) * RecComb(n-d0,u)
-    for u in range(1, min(max_val, n-1-d1) +1):
-        right_sum += stirling(n-l-u,k-1) * RecComb(n-1-d1,u)
 
+    left_sum = S_func((n-l),(k-1),l,d0 -l)
+    right_sum = S_func((n-l),(k-1),l,(d1 +1)-l)
     return left_sum - right_sum
 
+def S_func(n,k,l,d):
+    upper_bound_1 = n-k
+    upper_bound_2 = n-d
+    sum = 0
+    for u in range(0, min(upper_bound_1, upper_bound_2) + 1):
+        sum += stirling(n-u,k) * RecComb(n-d,u)
+    return sum
 
 def extract(n, res ) :
     l = [i for i in range(1,n+1)]
@@ -120,24 +122,23 @@ def next_block(n,k,r):
     while not complete:
         while inf < sup:
             mid = (inf+sup)//2
-            if r >= acc + R_prefix(n,k,index-1,d0,mid-1):
+            if r >= acc + R_prefix(n,k,index-1,d0,mid):
                 inf = mid+1
             else:
                 sup = mid
         mid = inf
-        threshold = stirling(n-index , k -1)
-        acc = acc + R_prefix(n,k,index-1,d0,mid-2)
-        block.append(mid-index)
+        threshold = stirling(n-index, k -1)
+        acc = acc + R_prefix(n,k,index-1,d0,mid-1)
+        block.append(mid-index+1)
         if r < threshold + acc:
             complete = True
         else:
-            index +=1
+            index += 1
             d0 = mid
-            inf =  d0+1
+            inf = d0+1
             sup = n
             acc = acc + threshold
-
-    return (block,acc)
+    return block,acc
 
 def unranking_lexico(n,k,r):
     n2 = n

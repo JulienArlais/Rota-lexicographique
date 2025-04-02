@@ -18,35 +18,37 @@ def RecComb(n, k):
         return RecComb(n-1,k-1) + RecComb(n-1, k)
 
 
+
 @functools.lru_cache(maxsize=None)
-def stirling(n,k):
+def stirling(n, k):
     if n == k:
         return 1
-    if n == 0 or k == 0 : return 0
+    if n <= 0 or k <= 0 or k > n:
+        return 0
+    return k * stirling(n-1, k) + stirling(n-1, k-1)
 
-    return k*stirling(n-1, k) + stirling(n-1, k-1)
+
+@functools.lru_cache(maxsize=None)
+def Ordered_Stirling(n, k):
+    return fact(k) * stirling(n, k)
+
+
 
 def R_prefix(n,k,l,d0,d1):
-
-    left_sum = S_func((n-l),(k-1),l,d0 -l)
-    right_sum = S_func((n-l),(k-1),l,(d1 +1)-l)
+    left_sum = T_func(n-l, k-1, d0 -l)
+    right_sum = T_func(n-l, k-1, (d1 +1)-l)
     return left_sum - right_sum
 
-def S_func(n,k,l,d):
+def T_func(n,k,d):
     upper_bound_1 = n-k
     upper_bound_2 = n-d
     sum = 0
     for u in range(0, min(upper_bound_1, upper_bound_2) + 1):
-        sum += stirling(n-u,k) * RecComb(n-d,u)
+        sum += fact(k+1)* stirling(n-u,k) * stirling(n-d,u)
     return sum
-def T_func(n,k,l,d):
-    upper_bound_1 = n-k
-    upper_bound_2= n-d
-    sum = 0
-    for u in range(0, min(upper_bound_1, upper_bound_2)):
-        sum += fact(k+1)*stirling(n-u,k) * RecComb(n-d,u)
-    return sum
-def extract(n, res ):
+
+
+def extract(n, res):
     l = [i for i in range(1,n+1)]
     p = []
     for r in res:
@@ -59,7 +61,7 @@ def extract(n, res ):
 
 def next_block(n,k,r):
     block = [0]
-    acc = stirling(n-1,k-1)
+    acc = Ordered_Stirling(n-1,k-1)
     if r < acc:
         return (block,0)
     d0 = 1
@@ -70,24 +72,25 @@ def next_block(n,k,r):
     while not complete:
         while inf < sup:
             mid = (inf+sup)//2
-            if r >= acc + R_prefix(n,k,index-1,d0,mid-1):
+            if r >= acc + R_prefix(n, k, index-1, d0, mid):
                 inf = mid+1
             else:
                 sup = mid
         mid = inf
-        threshold = stirling(n-index , k -1)
-        acc = acc + R_prefix(n,k,index-1,d0,mid-2)
-        block.append(mid-index)
+        threshold = Ordered_Stirling(n-index, k -1)
+        acc += R_prefix(n,k,index-1,d0,mid-1)
+        block.append(mid-index+1)
         if r < threshold + acc:
             complete = True
         else:
             index +=1
             d0 = mid
-            inf =  d0+1
+            inf = d0+1
             sup = n
             acc = acc + threshold
 
-    return (block,acc)
+    return block,acc
+
 
 def unranking_lexico(n,k,r):
     n2 = n
@@ -105,6 +108,6 @@ def unranking_lexico(n,k,r):
 
 n = 5
 k = 3
-print(stirling(n,k))
-for i in range(0, stirling(n,k)):
+print(Ordered_Stirling(n,k))
+for i in range(0, Ordered_Stirling(n,k)):
     print("rank = " , i ,"partition = ",unranking_lexico(n,k,i))
