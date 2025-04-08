@@ -94,7 +94,7 @@ def uniformite6(k, n):
 
 # Lexicographique
 
-def auxCompNKGen_lexico(n, k, r, i):
+def auxCompNKGen_lexico(n, k, r, i=1):
     if k > n or k <= 0 :
         return []
     if k == 1:
@@ -106,7 +106,7 @@ def auxCompNKGen_lexico(n, k, r, i):
     else:
         return auxCompNKGen_lexico(n, k, r - val, i + 1)
 
-# Invariant
+# Invariants
 
 def dans_ordre_lexico(e1, e2) : 
     for i in range(len(e1)) :
@@ -116,10 +116,24 @@ def dans_ordre_lexico(e1, e2) :
             return False
     return False
 
-def invariant_auxCompNKGen(n, k, r=0):
+def invariant_ordre(n, k, r=0):
     if (r >= coeff_bin(n - 1, n - k) - 1) :
         return True
-    return dans_ordre_lexico(auxCompNKGen_lexico(n,k,r,1), auxCompNKGen_lexico(n,k,r+1,1)) and invariant_auxCompNKGen(n, k, r+1)
+    return dans_ordre_lexico(auxCompNKGen_lexico(n,k,r), auxCompNKGen_lexico(n,k,r+1)) and invariant_ordre(n, k, r+1)
+
+def valeurs_correctes(n, k, e):
+    s = 0
+    for i in e :
+        if i < 0 or i > n-k+1 :
+            return False
+        s += i
+    return s == n
+
+def invariant_resultat_valide(n, k, r=0):
+    if (r >= coeff_bin(n - 1, n - k) - 1) :
+        return True
+    res = auxCompNKGen_lexico(n, k, r)
+    return len(res) == k and valeurs_correctes(n, k, res) and invariant_resultat_valide(n, k, r + 1)
 
 n = 10
 k = 4
@@ -127,4 +141,5 @@ k = 4
 print("Nb :", coeff_bin(n-1, n-k))
 for i in range(coeff_bin(n - 1, n - k)):
     print(auxCompNKGen_lexico(n, k, i, 1))
-print("Invariant ?", invariant_auxCompNKGen(n,k))
+print("Invariant: ordre ?", invariant_ordre(n,k))
+print("Invariant: resultat valide ?", invariant_resultat_valide(n,k))

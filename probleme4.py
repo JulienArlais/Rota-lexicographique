@@ -52,7 +52,7 @@ def MultiCombGen_lexico(k, n):
     r = random.randint(0, coeff_bin(k + n - 1, n))
     return auxMultiCombGen_lexico(k, n, r, 0)
 
-def auxMultiCombGen_lexico(k, n, r, i):
+def auxMultiCombGen_lexico(k, n, r, i=1):
     if n == 0:
         return []
     if r < coeff_bin(k - i + n - 1, n - 1):
@@ -62,7 +62,7 @@ def auxMultiCombGen_lexico(k, n, r, i):
         return auxMultiCombGen_lexico(k, n, r, i + 1)
 
 
-# Invariant
+# Invariants
 
 def dans_ordre_lexico(e1, e2) : 
     for i in range(len(e1)) :
@@ -72,15 +72,28 @@ def dans_ordre_lexico(e1, e2) :
             return False
     return False
 
-def invariant_auxMultiCombGen(k, n, r=0):
+def invariant_ordre(k, n, r=0):
     if (r >= coeff_bin(k+n-1,n) - 1) :
         return True
-    return dans_ordre_lexico(auxMultiCombGen_lexico(k,n,r,1), auxMultiCombGen_lexico(k,n,r+1,1)) and invariant_auxMultiCombGen(k, n, r+1)
+    return dans_ordre_lexico(auxMultiCombGen_lexico(k,n,r), auxMultiCombGen_lexico(k,n,r+1)) and invariant_ordre(k, n, r+1)
+
+def valeurs_correctes(k, e):
+    for i in range (0,len(e)) :
+        if e[i] < 1 or e[i] > k or (i < len(e)-1 and e[i] > e[i+1]):
+            return False
+    return True
+
+def invariant_resultat_valide(k, n, r=0):
+    if (r >= coeff_bin(k+n-1,n) - 1) :
+        return True
+    res = auxMultiCombGen_lexico(k, n, r)
+    return len(res) == n and valeurs_correctes(k, res) and invariant_resultat_valide(k, n, r + 1)
 
 k = 5
 n = 3
 print("Nb : ", coeff_bin(k+n-1,n))
 
 for i in range(0,coeff_bin(k+n-1,n)):
-    print(auxMultiCombGen_lexico(k,n,i,1))
-print("Invariant ?", invariant_auxMultiCombGen(k,n))
+    print(auxMultiCombGen_lexico(k,n,i))
+print("Invariant: ordre ?", invariant_ordre(k,n))
+print("Invariant: resultat valide ?", invariant_resultat_valide(k,n))

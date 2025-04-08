@@ -65,7 +65,7 @@ def n_sequence_lexico(k, n, r):
     r //=k
     return n_sequence_lexico(k,n-1,r) + [val]
 
-# Invariant
+# Invariants
 
 def dans_ordre_lexico(e1, e2) : 
     for i in range(len(e1)) :
@@ -75,11 +75,22 @@ def dans_ordre_lexico(e1, e2) :
             return False
     return False
 
-def invariant_n_sequence(k, n, r=0):
+def invariant_ordre(k, n, r=0):
     if (r >= k**n - 1) :
         return True
-    return dans_ordre_lexico(n_sequence_lexico(k,n,r), n_sequence_lexico(k,n,r+1)) and invariant_n_sequence(k, n, r+1)
+    return dans_ordre_lexico(n_sequence_lexico(k,n,r), n_sequence_lexico(k,n,r+1)) and invariant_ordre(k, n, r+1)
 
+def valeurs_correctes(k, e):
+    for i in e :
+        if i < 1 or i > k :
+            return False
+    return True
+
+def invariant_resultat_valide(k, n, r=0):
+    if (r >= k**n - 1) :
+        return True
+    res = n_sequence_lexico(k, n, r)
+    return len(res) == n and valeurs_correctes(k, res) and invariant_resultat_valide(k, n, r + 1)
 
 # Test lexicographique
 k = 4
@@ -87,4 +98,5 @@ n = 3
 print("Nb : ", k**n)
 for i in range (0,k**n):
     print(n_sequence_lexico(k,n,i))
-print("Invariant ?", invariant_n_sequence(k,n))
+print("Invariant: ordre ?", invariant_ordre(k,n))
+print("Invariant: resultat valide ?", invariant_resultat_valide(k,n))

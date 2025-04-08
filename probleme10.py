@@ -64,6 +64,35 @@ def P_generator_unranking(n, k, r, j = 1):
     else :
         r -= val
         return P_generator_unranking(n, k, r, j + 1)
+    
+# Invariants
+
+def dans_ordre_lexico(e1, e2) : 
+    for i in range(min(len(e1), len(e2))) :
+        if ( e1[i] < e2[i] ) :
+            return True
+        elif ( e1[i] > e2[i] ) :
+            return False
+    return len(e1) < len(e2)
+
+def invariant_ordre(n, k, r=0):
+    if (r == Un_P(n, k) - 1) :
+        return True
+    return dans_ordre_lexico(P_generator_unranking(n,k,r), P_generator_unranking(n,k,r+1)) and invariant_ordre(n, k, r+1)
+
+def valeurs_correctes(n, e):
+    s = 0
+    for i in range (0,len(e)) :
+        if e[i] < 1 or e[i] > n or (i < len(e)-1 and e[i] > e[i+1]):
+            return False
+        s += e[i]
+    return s == n
+
+def invariant_resultat_valide(n, k, r=0):
+    if (r == Un_P(n, k) - 1) :
+        return True
+    res = P_generator_unranking(n, k, r)
+    return valeurs_correctes(n, res) and invariant_resultat_valide(n, k, r + 1)
 
 n = 8
 k = 4
@@ -75,3 +104,5 @@ print("Nb : ", Un_P(n, k))
 # Test de l'unranking lexicographique
 for j in range(0, Un_P(n, k)):
     print(P_generator_unranking(n,k,j))
+print("Invariant: ordre ?", invariant_ordre(n,k))
+print("Invariant: resultat valide ?", invariant_resultat_valide(n,k))

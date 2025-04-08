@@ -93,7 +93,7 @@ def unrankingRecursive(n, k, r) :
         l2[i] = n - l[k - 1 - i]
     return l2
 
-# Invariant
+# Invariants
 
 def dans_ordre_lexico(e1, e2) : 
     for i in range(len(e1)) :
@@ -103,14 +103,27 @@ def dans_ordre_lexico(e1, e2) :
             return False
     return False
 
-def invariant_unrankingRecursive(n, k, r=0):
+def invariant_ordre(n, k, r=0):
     if (r >= RecComb(n,k)-1) :
         return True
-    return dans_ordre_lexico(unrankingRecursive(n,k,r), unrankingRecursive(n,k,r+1)) and invariant_unrankingRecursive(n, k, r+1)
+    return dans_ordre_lexico(unrankingRecursive(n,k,r), unrankingRecursive(n,k,r+1)) and invariant_ordre(n, k, r+1)
+
+def valeurs_correctes(n, e):
+    for i in range (0,len(e)) :
+        if e[i] < 1 or e[i] > n or (i < len(e)-1 and e[i] >= e[i+1]):
+            return False
+    return True
+
+def invariant_resultat_valide(n, k, r=0):
+    if (r >= RecComb(n,k)-1) :
+        return True
+    res = unrankingRecursive(n, k, r)
+    return len(res) == k and valeurs_correctes(n, res) and invariant_resultat_valide(n, k, r + 1)
 
 n = 5
 k = 3
 print("Nb :", RecComb(n,k))
 for i in range(RecComb(n,k)):
     print(unrankingRecursive(n,k,i))
-print("Invariant ?", invariant_unrankingRecursive(n, k))
+print("Invariant: ordre ?", invariant_ordre(n,k))
+print("Invariant: resultat valide ?", invariant_resultat_valide(n,k))
