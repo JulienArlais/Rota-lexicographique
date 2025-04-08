@@ -45,43 +45,25 @@ def P_generator_part(n, k):
         return sorted(partition)
 
 
-# Avec unranking
+# Lexicographique
 
-def gen_partition_unranking(n,k):
-    r = random.randint(0, Un_P(n,k)-1)
-    return Generator(n,k,r)
+def ncounting(n,k,j):
+    if n == 0 and k >=0: 
+        return 1
+    acc = 0
+    for i in range(j,n+1):
+        acc += ncounting(n-i,k-1, i)
+    return acc
 
-"""
- changed it to match the logic in the bell number so that we wont have 
- different algorithms for each one
-"""
-def Generator(n, k, r):
-    index = 0
-    for i in range(1, k+1):
-        r = r - P(n, i)
-        if r < 0:
-            index = i
-            r = r + P(n, i)
-            break
-    return P_generator_unranking(n, index, r)
-
-def P_generator_unranking(n, k, r):
-    """ Generates a partition of n into k parts. """
-    if k > n :
+def P_generator_unranking(n, k, r, j = 1):
+    if n == 0:
         return []
-    if k <= 0 :
-        return []
-    if k == 1:
-        return [n]
-    if k == n:
-        return [1] * n
-    # Randomly pick between the two cases, weighted by number of partitions
-    if r < P(n - 1, k - 1):
-        return [1] + P_generator_unranking(n - 1, k - 1, r)
-    else:
-        r = r - P(n - 1, k - 1)
-        partition = P_generator_unranking(n - k, k, r)
-        return [x + 1 for x in partition]  # Shift partition to ensure positivity
+    val = ncounting(n - j, k - 1, j)
+    if r < val:
+        return [j] + P_generator_unranking(n - j, k - 1, r, j)
+    else :
+        r -= val
+        return P_generator_unranking(n, k, r, j + 1)
 
 n = 8
 k = 4
@@ -90,6 +72,6 @@ print("Nb : ", Un_P(n, k))
 # Test de la fonction naive
 #uniformite10(n,k)
 
-# Test de l'unranking
+# Test de l'unranking lexicographique
 for j in range(0, Un_P(n, k)):
-    print(Generator(n,k,j))
+    print(P_generator_unranking(n,k,j))
