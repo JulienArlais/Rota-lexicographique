@@ -1,5 +1,8 @@
 import random
 import functools
+import time
+import matplotlib.pyplot as plt
+import csv
 
 @functools.lru_cache(maxsize=None)
 def coeff_bin(k, n):
@@ -97,3 +100,32 @@ for i in range(0,coeff_bin(k+n-1,n)):
     print(auxMultiCombGen_lexico(k,n,i))
 print("Invariant: ordre ?", invariant_ordre(k,n))
 print("Invariant: resultat valide ?", invariant_resultat_valide(k,n))
+
+def performance (k,n,r):
+    with open('Performances/prob4.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
+        
+        writer.writerow(['n', 'Temps d\'exécution (secondes)'])
+        for i in range (1, n):
+            start_time = time.time()
+            x = auxMultiCombGen_lexico(k,i,r)
+            elapsed_time = time.time() - start_time
+            writer.writerow([i, elapsed_time])
+    n_values = []
+    execution_times = []
+    with open('Performances/prob4.csv', mode='r') as file:
+        reader = csv.reader(file)
+        next(reader)
+        for row in reader:
+            n_values.append(int(row[0]))
+            execution_times.append(float(row[1]))
+    plt.figure(figsize=(10, 6))
+    plt.plot(n_values, execution_times, color='r', linestyle='-', markersize=4)
+    plt.title('Temps d\'exécution de n_sequence_lexico en fonction de n')
+    plt.xlabel('n')
+    plt.ylabel('Temps d\'exécution (secondes)')
+    plt.grid(True)
+    plt.savefig('Performances/graphe4.png')
+    plt.show()
+
+performance(495, 495, 0)

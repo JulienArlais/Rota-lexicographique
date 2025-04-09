@@ -1,6 +1,9 @@
 
 import functools
 import random
+import time
+import matplotlib.pyplot as plt
+import csv
 
 def fact(i):
     if i == 00 or i == 1:
@@ -127,3 +130,32 @@ for i in range(RecComb(n,k)):
     print(unrankingRecursive(n,k,i))
 print("Invariant: ordre ?", invariant_ordre(n,k))
 print("Invariant: resultat valide ?", invariant_resultat_valide(n,k))
+
+def performance (n,k,r):
+    with open('Performances/prob5.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
+        
+        writer.writerow(['n', 'Temps d\'exécution (secondes)'])
+        for i in range (1, n):
+            start_time = time.time()
+            x = unrankingRecursive(n,i,r)
+            elapsed_time = time.time() - start_time
+            writer.writerow([i, elapsed_time])
+    k_values = []
+    execution_times = []
+    with open('Performances/prob5.csv', mode='r') as file:
+        reader = csv.reader(file)
+        next(reader)
+        for row in reader:
+            k_values.append(int(row[0]))
+            execution_times.append(float(row[1]))
+    plt.figure(figsize=(10, 6))
+    plt.plot(k_values, execution_times, color='r', linestyle='-', markersize=4)
+    plt.title('Temps d\'exécution de n_sequence_lexico en fonction de k')
+    plt.xlabel('k')
+    plt.ylabel('Temps d\'exécution (secondes)')
+    plt.grid(True)
+    plt.savefig('Performances/graphe5.png')
+    plt.show()
+
+performance(495, 495, 3000)
