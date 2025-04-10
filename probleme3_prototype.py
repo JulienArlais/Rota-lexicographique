@@ -1,22 +1,23 @@
 import functools
 
+
 def fact(i):
-    if i == 00 or i == 1:
+    if i == 0 or i == 1:
         return 1
     else:
-        return i * fact(i-1)
+        return i * fact(i - 1)
+
 
 @functools.lru_cache(maxsize=None)
 def RecComb(n, k):
-    if n == k :
+    if n == k:
         return 1
     elif k == 0:
         return 1
-    elif(n <= 0 or k > n):
+    elif (n <= 0 or k > n):
         return 0
     else:
-        return RecComb(n-1,k-1) + RecComb(n-1, k)
-
+        return RecComb(n - 1, k - 1) + RecComb(n - 1, k)
 
 
 @functools.lru_cache(maxsize=None)
@@ -25,7 +26,7 @@ def stirling(n, k):
         return 1
     if n <= 0 or k <= 0 or k > n:
         return 0
-    return k * stirling(n-1, k) + stirling(n-1, k-1)
+    return k * stirling(n - 1, k) + stirling(n - 1, k - 1)
 
 
 @functools.lru_cache(maxsize=None)
@@ -33,81 +34,109 @@ def Ordered_Stirling(n, k):
     return fact(k) * stirling(n, k)
 
 
-
 def R_prefix(n,k,l,d0,d1):
-    left_sum = T_func(n-l, k-1, d0 -l)
-    right_sum = T_func(n-l, k-1, (d1 +1)-l)
+    # print(f"R_prefix n = {n} , k = {k} , l = {l}, d0 = {d0}, d1 = {d1}")
+    left_sum = T_func(n-l, k-1, d0-l)
+    right_sum = T_func(n-l, k-1, d1-l)
     return left_sum - right_sum
-
 def T_func(n,k,d):
     upper_bound_1 = n-k
     upper_bound_2 = n-d
     sum = 0
     for u in range(0, min(upper_bound_1, upper_bound_2) + 1):
-        sum += fact(k+1)* stirling(n-u,k) * stirling(n-d,u)
+        sum += fact(k)*stirling(n-u,k) * RecComb(n-d,u)
     return sum
-
-
 def extract(n, res):
-    l = [i for i in range(1,n+1)]
+    l = [i for i in range(1, n + 1)]
     p = []
     for r in res:
         q = []
         for i in r:
             q.append(l.pop(i))
-            #
         p.append(q)
     return p
 
-def next_block(n,k,r):
-    block = [0]
-    acc = Ordered_Stirling(n-1,k-1)
-    if r < acc:
-        return (block,0)
-    d0 = 1
-    index = 2
-    inf = 2
+
+def next_block(n, k, r):
+    # print("-----------NEW Block Call-------")
+    # print(f"n = {n} , k = {k} , r = {r}")
+    block = []
+    acc = 0
+
+    d0 = 0
+    index = 1
+    inf = 1
     sup = n
     complete = False
+
     while not complete:
+        # print("--------- NEW ITERATION--------")
         while inf < sup:
-            mid = (inf+sup)//2
+            mid = (inf + sup) // 2
+            # print(f" d0 = {d0}, index = {index}, inf = {inf}, sup = {sup}, mid = {mid}, acc = {acc} , R_pref = {R_prefix(n, k, index, d0, mid)}")
             if r >= acc + R_prefix(n, k, index-1, d0, mid):
-                inf = mid+1
+                # print("in first")
+                inf = mid + 1
             else:
+                # print("in second")
                 sup = mid
         mid = inf
-        threshold = Ordered_Stirling(n-index, k -1)
-        acc += R_prefix(n,k,index-1,d0,mid-1)
-        block.append(mid-index+1)
+        threshold = Ordered_Stirling(n-index , k-1)
+
+        acc = acc + R_prefix(n,k,index-1,d0, mid-1)
+
+        block.append(mid - index)
+
+        # Ensuring cete condition can be met
         if r < threshold + acc:
             complete = True
+            # print(f"block = {block}")
+            # print("-------------DONE-----------")
         else:
-            index +=1
+            # print(f"index ={index}, threshold={threshold}, acc={acc} , block = {block} \n")
+            index += 1
             d0 = mid
-            inf = d0+1
+            inf = d0 + 1
             sup = n
-            acc = acc + threshold
+            acc += threshold
 
-    return block,acc
+    return (block, acc)
 
-
-def unranking_lexico(n,k,r):
+def unranking_lexico(n, k, r):
     n2 = n
     res = []
-    while k > 1 :
-        (b,acc) = next_block(n,k,r)
+    while k > 1:
+        (b, acc) = next_block(n, k, r)
         res.append(b)
         r -= acc
         n -= len(b)
         k -= 1
 
     res.append([0 for i in range(n)])
-    res = extract(n2,res)
+    res = extract(n2, res)
     return res
+
 
 n = 5
 k = 3
-print(Ordered_Stirling(n,k))
-for i in range(0, Ordered_Stirling(n,k)):
-    print("rank = " , i ,"partition = ",unranking_lexico(n,k,i))
+# print(Ordered_Stirling(n,k))
+# print(unranking_lexico(n, k,7))
+for i in range(0, 150):    # print("----------------------------------")
+    print("rank = ", i, "partition = ", unranking_lexico(n, k, i))
+    # print("----------------------------------")
+
+n = 5
+k = 3
+l = 2
+d0 = 3
+# def nrml_T_func(n,k,d,l):
+#     upper_bound1 = n-k-l+1
+#     upper_bound2 = n-d
+#     total = 0
+#     for u in range(0, min(upper_bound1, upper_bound2)+1):
+#         total += fact(k-1)*stirling(n-l-u, k-1)*RecComb(n-d,u)
+#     return total
+
+
+# print(nrml_T_func(n,k,d0,l))
+# print(T_func(n-l,k-1,d0-l))
