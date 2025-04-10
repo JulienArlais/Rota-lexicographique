@@ -117,13 +117,56 @@ def unranking_lexico(n, k, r):
     return res
 
 
+# Invariants
+
+def dans_ordre_lexico(e1, e2) :
+    for i in range(min(len(e1), len(e2))) :
+        if (dans_ordre_lexico_aux(e1[i], e2[i])) :
+            return True
+        elif (dans_ordre_lexico_aux(e1[i], e2[i])) :
+            return False
+    return False
+
+def dans_ordre_lexico_aux(e1, e2) : 
+    for i in range(min(len(e1), len(e2))) :
+        if ( e1[i] < e2[i] ) :
+            return True
+        elif ( e1[i] > e2[i] ) :
+            return False
+    return len(e1) < len(e2)
+
+def invariant_ordre(n, k, r=0):
+    if (r == stirling(n, k) - 1) :
+        return True
+    return dans_ordre_lexico(unranking_lexico(n,k,r), unranking_lexico(n,k,r+1)) and invariant_ordre(n, k, r+1)
+
+def valeurs_correctes(n, e):
+    l = []
+    for i in e :
+        if i == [] :
+            return False
+        for j in i :
+            if j in l or j < 0 or j > n:
+                return False
+            l.append(i)
+    return True
+
+def invariant_resultat_valide(n, k, r=0):
+    if (r >= Ordered_Stirling(n,k) - 1) :
+        return True
+    res = unranking_lexico(n, k, r)
+    return len(res) == k and valeurs_correctes(n, res) and invariant_resultat_valide(n, k, r + 1)
+
+
 n = 5
 k = 3
-# print(Ordered_Stirling(n,k))
+print(Ordered_Stirling(n,k))
 # print(unranking_lexico(n, k,7))
-for i in range(0, 150):    # print("----------------------------------")
+for i in range(0, Ordered_Stirling(n,k)):    # print("----------------------------------")
     print("rank = ", i, "partition = ", unranking_lexico(n, k, i))
     # print("----------------------------------")
+print("Invariant: ordre ?", invariant_ordre(n,k))
+print("Invariant: resultat valide ?", invariant_resultat_valide(n,k))
 
 n = 5
 k = 3
