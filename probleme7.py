@@ -27,12 +27,12 @@ def fact(i):
 
 
 @functools.lru_cache(maxsize=None)
-def RecPart(n,k):
+def stirling(n, k):
     if n == k:
         return 1
     if n == 0 or k == 0 : return 0
 
-    return k*RecPart(n-1, k) + RecPart(n-1, k-1)
+    return k*stirling(n - 1, k) + stirling(n - 1, k - 1)
 
 
 def generatorPartition(n,k):
@@ -42,8 +42,8 @@ def generatorPartition(n,k):
         return []
     if n == 0 and k == 0:
         return []
-    val = random.randint(1, RecPart(n, k))
-    if val <= RecPart(n-1, k-1):
+    val = random.randint(1, stirling(n, k))
+    if val <= stirling(n - 1, k - 1):
         partition = generatorPartition(n - 1, k - 1)
         partition.append([n])  # Add n as a new subset
         return partition
@@ -64,13 +64,13 @@ def generatorPartition_unranking(n,k,r):
         return []
     if n == 0 and k == 0:
         return []
-    if r < RecPart(n-1, k-1):
+    if r < stirling(n - 1, k - 1):
         partition = generatorPartition_unranking(n - 1, k - 1, r)
-        partition.append([n]) 
+        partition.append([n])
         return partition
     else:
-        r = r - RecPart(n-1,k-1)
-        bloc, r = (r//RecPart(n-1,k), r%RecPart(n-1,k))
+        r = r - stirling(n - 1, k - 1)
+        bloc, r = (r // stirling(n - 1, k), r % stirling(n - 1, k))
 
         partition = generatorPartition_unranking(n - 1, k, r)
 
@@ -84,25 +84,127 @@ def BellNumber(n,k):
     else:
         sum = 0
         for i in range(0,k+1):
-            sum += RecPart(n,i)
+            sum += stirling(n, i)
         return sum
 
 def Bellnumber_partition_unranking(n,k,r):
     index = 0
     for i in range(1,k+1):
-        r = r - RecPart(n,i)
+        r = r - stirling(n, i)
         if r < 0 :
             index = i
-            r = r + RecPart(n , i)
+            r = r + stirling(n, i)
             break
     return generatorPartition_unranking(n,index,r)
 
 n = 4
-k = 4
+k = 3
 
 print(BellNumber(n,k))
 #print(generatorPartition_unranking(5,3,0))
 
+print("-----GENERATED WITH UNRANKING ------")
 for j in range(BellNumber(n,k)):
-    print(Bellnumber_partition_unranking(n,k,j))
+    print(j,"",Bellnumber_partition_unranking(n,k,j))
 
+"""
+    LEXICAL GENERATION
+"""
+
+def R_prefix(n,k,l,d0,d1):
+    left_sum = U_func(n-l, k-1, d0 -l)
+    right_sum = U_func(n-l, k-1, (d1+1)-l)
+    return left_sum - right_sum
+
+def U_func(n,k,d):
+    upper_bound_1 = n
+    total = 0
+    for u in range(0, upper_bound_1 + 1):
+        for i in range(1, (k+1) + 1): # plus one in the end to count that variable
+            total += stirling(n - u, i - 1) * RecComb(n - d, u)
+    return total
+
+def extract(n, res ) :
+    l = [i for i in range(1,n+1)]
+    p = []
+    for r in res:
+        q = []
+        for i in r:
+            q.append(l.pop(i))
+            #
+        p.append(q)
+    return p
+
+
+def next_block(n, k, r):
+    # print("---------------------------------")
+    # print(" New Block Iteration ")
+    # print(f" block n = {n}, k ={k}, r ={r}")
+    if k <= 1:
+        block = []
+        block.extend([0] * n)
+        return block, 0
+
+    block = [0]
+    acc = BellNumber(n-1, k-1)
+    if r < acc:
+        return block,0
+
+    d0 = 1
+    index = 2
+    inf = 2
+    sup = n
+    complete = False
+
+    while not complete:
+        while inf < sup:
+            mid = (inf + sup) // 2
+            # print(f" d0 = {d0}, index = {index}, inf = {inf}, sup = {sup}, mid = {mid}, acc = {acc} , R_pref = {R_prefix(n, k, index, d0, mid)}")
+            if r >= acc + R_prefix(n, k, index-1, d0, mid-1):
+                # print("in first")
+                inf = mid + 1
+            else:
+                # print("in second")
+                sup = mid
+
+        mid = inf
+        threshold = BellNumber(n - index, k - 1)
+        acc += R_prefix(n, k, index-1, d0, mid - 2)
+
+        block.append(mid - index)
+        if index > n:
+            raise ValueError(f"index {index} is greater than allowed maximum {n}")
+        if r < threshold + acc:
+            # print(f"Done with block = {block}")
+            complete = True
+        else:
+            # print("not done")
+            # print(f" current block = {block}")
+            index += 1
+            d0 = mid
+            inf = d0 + 1
+            sup = n
+            acc += threshold
+            # print("------------------------------------")
+
+    return (block, acc)
+
+
+def unranking_lexico(n, k, r):
+    n2 = n
+    res = []
+    while n > 0 and k > 0:
+        b, new_r = next_block(n, k, r)
+        res.append(b)
+        r -= new_r
+        n -= len(b)
+        k -= 1
+
+    res = extract(n2, res)
+    return res
+
+n = 4
+k = 3
+print("-------LEXICALLY ORDERED-------")
+for i in range(0, BellNumber(n,k)):
+    print(i,"",unranking_lexico(n, k, i))
