@@ -97,16 +97,6 @@ def Bellnumber_partition_unranking(n,k,r):
             break
     return generatorPartition_unranking(n,index,r)
 
-n = 4
-k = 3
-
-print(BellNumber(n,k))
-#print(generatorPartition_unranking(5,3,0))
-
-print("-----GENERATED WITH UNRANKING ------")
-for j in range(BellNumber(n,k)):
-    print(j,"",Bellnumber_partition_unranking(n,k,j))
-
 """
     LEXICAL GENERATION
 """
@@ -204,7 +194,15 @@ def unranking_lexico(n, k, r):
     return res
 
 n = 4
-k = 3
+k = 4
+
+
+print("Number of partitions : " ,BellNumber(n,k))
+print("-----GENERATED WITH UNRANKING ------")
+for j in range(BellNumber(n,k)):
+    print(j,"",Bellnumber_partition_unranking(n,k,j))
+
 print("-------LEXICALLY ORDERED-------")
 for i in range(0, BellNumber(n,k)):
     print(i,"",unranking_lexico(n, k, i))
+
