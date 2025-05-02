@@ -123,8 +123,6 @@ def dans_ordre_lexico(e1, e2) :
     for i in range(min(len(e1), len(e2))) :
         if (dans_ordre_lexico_aux(e1[i], e2[i])) :
             return True
-        elif (dans_ordre_lexico_aux(e1[i], e2[i])) :
-            return False
     return False
 
 def dans_ordre_lexico_aux(e1, e2) : 
@@ -136,7 +134,7 @@ def dans_ordre_lexico_aux(e1, e2) :
     return len(e1) < len(e2)
 
 def invariant_ordre(n, k, r=0):
-    if (r == stirling(n, k) - 1) :
+    if (r == Ordered_Stirling(n, k) - 1) :
         return True
     return dans_ordre_lexico(unranking_lexico(n,k,r), unranking_lexico(n,k,r+1)) and invariant_ordre(n, k, r+1)
 
@@ -152,7 +150,7 @@ def valeurs_correctes(n, e):
     return True
 
 def invariant_resultat_valide(n, k, r=0):
-    if (r >= Ordered_Stirling(n,k) - 1) :
+    if (r >= Ordered_Stirling(n,k)) :
         return True
     res = unranking_lexico(n, k, r)
     return len(res) == k and valeurs_correctes(n, res) and invariant_resultat_valide(n, k, r + 1)

@@ -193,9 +193,53 @@ def unranking_lexico(n, k, r):
     res = extract(n2, res)
     return res
 
-n = 4
-k = 4
+def unranking_lexico_main(n, k, r):
+    if r >= BellNumber(n,k) :
+        raise ValueError("r doit être inférieur au nombre de possibilités :", BellNumber(n,k))
+    return unranking_lexico(n, k, r)
 
+# Invariants
+
+def dans_ordre_lexico(e1, e2) :
+    for i in range(min(len(e1), len(e2))) :
+        if (dans_ordre_lexico_aux(e1[i], e2[i])) :
+            return True
+        elif (dans_ordre_lexico_aux(e1[i], e2[i])) :
+            return False
+    return False
+
+def dans_ordre_lexico_aux(e1, e2) : 
+    for i in range(min(len(e1), len(e2))) :
+        if ( e1[i] < e2[i] ) :
+            return True
+        elif ( e1[i] > e2[i] ) :
+            return False
+    return len(e1) < len(e2)
+
+def invariant_ordre(n, k, r=0):
+    if (r == BellNumber(n, k) - 1) :
+        return True
+    return dans_ordre_lexico(unranking_lexico(n,k,r), unranking_lexico(n,k,r+1)) and invariant_ordre(n, k, r+1)
+
+def valeurs_correctes(n, e):
+    l = []
+    for i in e :
+        if i == [] :
+            return False
+        for j in i :
+            if j in l or j < 0 or j > n:
+                return False
+            l.append(i)
+    return True
+
+def invariant_resultat_valide(n, k, r=0):
+    if (r >= BellNumber(n,k)) :
+        return True
+    res = unranking_lexico(n, k, r)
+    return len(res) <= k and valeurs_correctes(n, res) and invariant_resultat_valide(n, k, r + 1)
+
+n = 6
+k = 4
 
 print("Number of partitions : " ,BellNumber(n,k))
 print("-----GENERATED WITH UNRANKING ------")
@@ -204,5 +248,8 @@ for j in range(BellNumber(n,k)):
 
 print("-------LEXICALLY ORDERED-------")
 for i in range(0, BellNumber(n,k)):
-    print(i,"",unranking_lexico(n, k, i))
+    print(i,"",unranking_lexico_main(n, k, i))
+
+print("Invariant: ordre ?", invariant_ordre(n,k))
+print("Invariant: resultat valide ?", invariant_resultat_valide(n,k))
 
