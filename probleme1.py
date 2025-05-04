@@ -131,4 +131,4 @@ def performance (k,n,r):
     plt.savefig('Performances/graphe1.png')
     plt.show()
 
-performance(5000, 998, 0)
+# performance(5000, 998, 0)

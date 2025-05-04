@@ -1,4 +1,3 @@
-
 import functools
 import random
 import time
@@ -16,7 +15,7 @@ def combination(n,k):
 
 
 @functools.lru_cache(maxsize=None)
-def RecComb(n, k):
+def binomial_coef(n, k):
     if n == k :
         return 1
     elif k == 0:
@@ -24,39 +23,60 @@ def RecComb(n, k):
     elif(n <= 0 or k > n):
         return 0
     else:
-        return RecComb(n-1,k) + RecComb(n-1, k-1)
+        return binomial_coef(n - 1, k) + binomial_coef(n - 1, k - 1)
 
 
-def generator(n,k):
+def combinationGenerator(n, k):
     if k > n:
         return []
     if n == 0 and k == 0:
         return []
     if k == 0:
         return []
-    val = random.randint(1, RecComb(n,k))
-    if val <= RecComb(n-1, k):
-        return  generator(n-1, k)
+    val = random.randint(1, binomial_coef(n, k))
+    if val <= binomial_coef(n - 1, k):
+        return combinationGenerator(n - 1, k)
     else:
-        return generator(n-1, k-1) + [n]
+        return combinationGenerator(n - 1, k - 1) + [n]
 
+"""
+Without Unranking
+"""
 
+print("--------GENERATING WITHOUT UNRANKING--------")
+n = 5
+k = 3
+print("Nb :", binomial_coef(n, k))
+for i in range(binomial_coef(n, k)):
+    print(combinationGenerator(n, k))
 
-def unrank_generator(n,k,r):
+def combinationGeneratorUnranking(n, k, r):
     if k == 0:
         return []
     if k > n:
         return []
-    if r < RecComb(n-1,k-1):
-        return unrank_generator(n-1,k-1,r) + [n]
+    if r < binomial_coef(n - 1, k - 1):
+        return combinationGeneratorUnranking(n - 1, k - 1, r) + [n]
     else:
-        r = r - RecComb(n-1,k-1)
-        return unrank_generator(n-1,k, r)
+        r = r - binomial_coef(n - 1, k - 1)
+        return combinationGeneratorUnranking(n - 1, k, r)
 
 
 def Comb(n,k):
-    r = random.randint(1,RecComb(n,k)-1)
-    return unrank_generator(n,k,r)
+    r = random.randint(1, binomial_coef(n, k) - 1)
+    return combinationGeneratorUnranking(n, k, r)
+
+"""
+Without Unranking   
+"""
+
+print("--------GENERATING WITH UNRANKING--------")
+n = 5
+k = 3
+print("Nb :", binomial_coef(n, k))
+for i in range(binomial_coef(n, k)):
+    print(combinationGeneratorUnranking(n, k, i))
+
 
 def uniformComb(n,k):
     l = []
@@ -81,7 +101,7 @@ def recGeneration(n, k, r) :
         return []
     if n == k :
         return [i for i in range(k)]
-    b = RecComb(n-1, k-1)
+    b = binomial_coef(n - 1, k - 1)
     if r < b :
         l = recGeneration(n-1, k-1, r)
         l.append(n-1)
@@ -107,7 +127,7 @@ def dans_ordre_lexico(e1, e2) :
     return False
 
 def invariant_ordre(n, k, r=0):
-    if (r >= RecComb(n,k)-1) :
+    if (r >= binomial_coef(n, k)-1) :
         return True
     return dans_ordre_lexico(unrankingRecursive(n,k,r), unrankingRecursive(n,k,r+1)) and invariant_ordre(n, k, r+1)
 
@@ -118,15 +138,15 @@ def valeurs_correctes(n, e):
     return True
 
 def invariant_resultat_valide(n, k, r=0):
-    if (r >= RecComb(n,k)-1) :
+    if (r >= binomial_coef(n, k)-1) :
         return True
     res = unrankingRecursive(n, k, r)
     return len(res) == k and valeurs_correctes(n, res) and invariant_resultat_valide(n, k, r + 1)
 
 n = 5
 k = 3
-print("Nb :", RecComb(n,k))
-for i in range(RecComb(n,k)):
+print("Nb :", binomial_coef(n, k))
+for i in range(binomial_coef(n, k)):
     print(unrankingRecursive(n,k,i))
 print("Invariant: ordre ?", invariant_ordre(n,k))
 print("Invariant: resultat valide ?", invariant_resultat_valide(n,k))

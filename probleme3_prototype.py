@@ -35,7 +35,6 @@ def Ordered_Stirling(n, k):
 
 
 def R_prefix(n,k,l,d0,d1):
-    # print(f"R_prefix n = {n} , k = {k} , l = {l}, d0 = {d0}, d1 = {d1}")
     left_sum = T_func(n-l, k-1, d0-l)
     right_sum = T_func(n-l, k-1, d1-l)
     return left_sum - right_sum
@@ -58,8 +57,6 @@ def extract(n, res):
 
 
 def next_block(n, k, r):
-    # print("-----------NEW Block Call-------")
-    # print(f"n = {n} , k = {k} , r = {r}")
     block = []
     acc = 0
 
@@ -70,15 +67,11 @@ def next_block(n, k, r):
     complete = False
 
     while not complete:
-        # print("--------- NEW ITERATION--------")
         while inf < sup:
             mid = (inf + sup) // 2
-            # print(f" d0 = {d0}, index = {index}, inf = {inf}, sup = {sup}, mid = {mid}, acc = {acc} , R_pref = {R_prefix(n, k, index, d0, mid)}")
             if r >= acc + R_prefix(n, k, index-1, d0, mid):
-                # print("in first")
                 inf = mid + 1
             else:
-                # print("in second")
                 sup = mid
         mid = inf
         threshold = Ordered_Stirling(n-index , k-1)
@@ -90,10 +83,7 @@ def next_block(n, k, r):
         # Ensuring cete condition can be met
         if r < threshold + acc:
             complete = True
-            # print(f"block = {block}")
-            # print("-------------DONE-----------")
         else:
-            # print(f"index ={index}, threshold={threshold}, acc={acc} , block = {block} \n")
             index += 1
             d0 = mid
             inf = d0 + 1

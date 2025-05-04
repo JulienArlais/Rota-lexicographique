@@ -127,9 +127,6 @@ def extract(n, res ) :
 
 
 def next_block(n, k, r):
-    # print("---------------------------------")
-    # print(" New Block Iteration ")
-    # print(f" block n = {n}, k ={k}, r ={r}")
     if k <= 1:
         block = []
         block.extend([0] * n)
@@ -149,12 +146,9 @@ def next_block(n, k, r):
     while not complete:
         while inf < sup:
             mid = (inf + sup) // 2
-            # print(f" d0 = {d0}, index = {index}, inf = {inf}, sup = {sup}, mid = {mid}, acc = {acc} , R_pref = {R_prefix(n, k, index, d0, mid)}")
             if r >= acc + R_prefix(n, k, index-1, d0, mid-1):
-                # print("in first")
                 inf = mid + 1
             else:
-                # print("in second")
                 sup = mid
 
         mid = inf
@@ -162,20 +156,14 @@ def next_block(n, k, r):
         acc += R_prefix(n, k, index-1, d0, mid - 2)
 
         block.append(mid - index)
-        if index > n:
-            raise ValueError(f"index {index} is greater than allowed maximum {n}")
         if r < threshold + acc:
-            # print(f"Done with block = {block}")
             complete = True
         else:
-            # print("not done")
-            # print(f" current block = {block}")
             index += 1
             d0 = mid
             inf = d0 + 1
             sup = n
             acc += threshold
-            # print("------------------------------------")
 
     return (block, acc)
 
@@ -194,7 +182,7 @@ def unranking_lexico(n, k, r):
     return res
 
 n = 4
-k = 4
+k = 3
 
 
 print("Number of partitions : " ,BellNumber(n,k))

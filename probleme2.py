@@ -1,6 +1,8 @@
 import functools
 import random
 import time
+import matplotlib
+matplotlib.use('TkAgg')  # or 'QtAgg' if you have Qt
 import matplotlib.pyplot as plt
 import csv
 
